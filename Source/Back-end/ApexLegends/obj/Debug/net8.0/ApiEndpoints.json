@@ -1,0 +1,12 @@
+[
+  {
+    "ContainingType": "ApexLegends.Controllers.ApiController",
+    "Method": "GetPlayer",
+    "RelativePath": "Api",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
