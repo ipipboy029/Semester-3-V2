@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BusinessLayer.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,35 +10,45 @@ namespace BusinessLayer
 {
     public class ApiService
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
-        private readonly string _apiUrl;
+        private readonly string tokenEndpoint = "https://osu.ppy.sh/oauth/token";
+        private readonly string _clientId;
+        private readonly string _clientSecret;
 
-        public ApiService(string apiKey, string apiUrl)
+        private AuthToken _authToken;
+
+        public ApiService(string clientId, string clientSecret)
         {
-            _apiKey = apiKey;
-            _apiUrl = apiUrl;
-            _httpClient = new HttpClient();
+            _clientId = clientId;
+            _clientSecret = clientSecret;
+            _authToken = new AuthToken();
         }
-
-        private async Task<string> GetDataFromApiAsync(string endPoint)
+        private async Task<AuthToken> GetAccessTokenAsync()
         {
-            var response = await _httpClient.GetAsync(_apiUrl + endPoint);
-
-            if (response.IsSuccessStatusCode)
+            using (var httpClient = new HttpClient())
             {
-                return await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
+                var body = new StringContent($"client_id={_clientId}&client_secret={_clientSecret}&grant_type=client_credentials&scope=public", Encoding.UTF8, "application/x-www-form-urlencoded");
+                var response = await httpClient.PostAsync(tokenEndpoint, body);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Error fetching token:");
+                    Console.WriteLine($"Status Code: {response.StatusCode}");
+                    Console.WriteLine($"Response: {responseContent}");
+                    Console.WriteLine(responseContent);
+                    return null;
+                }
+                var tokenResponse = JsonConvert.DeserializeObject<Token>(responseContent);
+                AuthToken token = new AuthToken
+                {
+                    token = tokenResponse.AccessToken,
+                    expireDate = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn)
+                };
+                return token;
             }
         }
-        public async Task<string> GetData()
+        public async void Init()
         {
-            string apiUrl = $"bridge?auth={_apiKey}&player=ipipboy029&platform=PC";
-            var data = await GetDataFromApiAsync(apiUrl);
-            return data;
+            _authToken = await GetAccessTokenAsync();
         }
     }
 }

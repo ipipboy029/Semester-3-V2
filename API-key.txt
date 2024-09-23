@@ -1,1 +1,3 @@
 1d5039d0f27248122fd29cb59e7209e2
+Osu client secret: CB97I7f1QzcSxBWUN7Phxbl8qF8x11iivPD7W0Tl
+osu client ID: 34907
