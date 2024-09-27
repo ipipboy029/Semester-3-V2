@@ -8,8 +8,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-string? clientId = builder.Configuration["Apisettings: ClientId"];
-string? clientSecret = builder.Configuration["Apisettings: ClientSecret"];
+string? clientId = builder.Configuration["ApiSettings:ClientId"];
+string? clientSecret = builder.Configuration["ApiSettings:ClientSecret"];
 builder.Services.AddSingleton((services) => new ApiService(clientId, clientSecret));
 
 var app = builder.Build();
