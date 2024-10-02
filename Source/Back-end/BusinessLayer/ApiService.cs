@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace BusinessLayer
 {
     public class ApiService
     {
-        private readonly string tokenEndpoint = "https://osu.ppy.sh/oauth/token";
+        private readonly string _tokenEndpoint = "https://osu.ppy.sh/oauth/token";
+        private readonly string _baseUrl = "https://osu.ppy.sh/api/v2/";
         private readonly string _clientId;
         private readonly string _clientSecret;
 
@@ -27,7 +29,7 @@ namespace BusinessLayer
             using (var httpClient = new HttpClient())
             {
                 var body = new StringContent($"client_id={_clientId}&client_secret={_clientSecret}&grant_type=client_credentials&scope=public", Encoding.UTF8, "application/x-www-form-urlencoded");
-                var response = await httpClient.PostAsync(tokenEndpoint, body);
+                var response = await httpClient.PostAsync(_tokenEndpoint, body);
                 var responseContent = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
                 {
@@ -46,9 +48,31 @@ namespace BusinessLayer
                 return token;
             }
         }
+
         public async void Init()
         {
             _authToken = await GetAccessTokenAsync();
+        }
+
+        public async Task<string> Request(string endPoint)
+        {
+            string jsonResponse;
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _authToken.token);
+
+                using HttpResponseMessage response = await httpClient.GetAsync(_baseUrl + endPoint);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Error fetching token:");
+                    Console.WriteLine($"Status Code: {response.StatusCode}");
+                    return null;
+                }
+                jsonResponse = await response.Content.ReadAsStringAsync();
+            }
+            return jsonResponse;
         }
     }
 }

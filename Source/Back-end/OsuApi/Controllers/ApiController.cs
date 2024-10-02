@@ -1,6 +1,7 @@
 using BusinessLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using BusinessLayer.Models;
 
 namespace OsuApi.Controllers
 {
@@ -13,6 +14,20 @@ namespace OsuApi.Controllers
         public ApiController(ApiService myApiService)
         {
             _apiService = myApiService;
+        }
+
+        [HttpGet("{endPoint}")]
+        public async Task<IActionResult> GetRequest(string endPoint)
+        {
+            string result = await _apiService.Request(endPoint);
+            if (result == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
     }
 }
