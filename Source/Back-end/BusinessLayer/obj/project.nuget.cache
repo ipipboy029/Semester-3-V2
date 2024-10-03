@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NYRoMWSzuJSI3smszoXmu9OB4pqiFRosDMfBJjpoq2Mg18i5SaipQURZAcb+PHzxcruH9ajXAz0STHEHlIPONg==",
+  "dgSpecHash": "9nLEnLvyG0/aM3F6WfBKyy+tELQy6dsZw9pq+FemTp8FIvUNxKjrttRpv7AiW1JOxLlm5ecJVR4tmIUzBe4T4Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Ivan Ip\\OneDrive\\Documenten\\Fontys\\Semester-3-V2\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj",
+  "projectFilePath": "C:\\Users\\Ivan Ip\\OneDrive\\Documenten\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ivan Ip\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],
