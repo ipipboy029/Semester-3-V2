@@ -22,3 +22,16 @@ C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\
 C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\refint\BusinessLayer.dll
 C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.pdb
 C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\ref\BusinessLayer.dll
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\bin\Debug\net8.0\BusinessLayer.deps.json
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\bin\Debug\net8.0\BusinessLayer.dll
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\bin\Debug\net8.0\BusinessLayer.pdb
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.csproj.AssemblyReference.cache
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.AssemblyInfoInputs.cache
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.AssemblyInfo.cs
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.sourcelink.json
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.dll
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\refint\BusinessLayer.dll
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.pdb
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\ref\BusinessLayer.dll
