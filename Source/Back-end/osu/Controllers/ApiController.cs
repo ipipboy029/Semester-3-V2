@@ -1,9 +1,8 @@
 using BusinessLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
-using BusinessLayer.Models;
 
-namespace OsuApi.Controllers
+namespace osu.Controllers
 {
     [ApiController]
     [Route("[controller]")]

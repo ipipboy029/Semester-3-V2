@@ -13,7 +13,7 @@ string? clientSecret = builder.Configuration["ApiSettings:ClientSecret"];
 builder.Services.AddSingleton((services) => new ApiService(clientId, clientSecret));
 
 var app = builder.Build();
-  
+
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
