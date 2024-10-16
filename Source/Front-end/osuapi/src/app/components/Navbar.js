@@ -1,7 +1,24 @@
+"use client"
+import { useEffect, useState } from "react"
+import { useRouter } from 'next/navigation';
 import Image from "next/image"
 
-async function NavBar(){
-    return(
+export default function NavBar(){
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user); 
+  }, []); 
+
+  const handleLogout = () => {
+    localStorage.removeItem('user'); 
+    setIsLoggedIn(false); 
+    router.push('/login'); 
+  };
+
+  return(
         <header class="shadow mb-2">
         <div class="relative flex max-w-screen-xl flex-col overflow-hidden px-4 py-4 md:mx-auto md:flex-row md:items-center">
           <a href="https://osu.ppy.sh/" class="flex items-center whitespace-nowrap text-2xl font-black">
@@ -19,6 +36,15 @@ async function NavBar(){
               <li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="beatmaps/">Beatmaps</a></li>
               <li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="player/">Search players</a></li>
               <li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="rankings/">Rankings</a></li>
+              {isLoggedIn && (<li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="post/">Posts</a></li>)}
+
+              {isLoggedIn ? (
+          <button class="bg-transparent hover:bg-pink-500 text-pink-400 font-semibold hover:text-white py-2 px-4 border border-pink-500 hover:border-transparent rounded" onClick={handleLogout}>Logout</button> // Show Logout button if user is logged in
+        ) : (
+          <>
+            <button class="bg-transparent hover:bg-pink-500 text-pink-400 font-semibold hover:text-white py-2 px-4 border border-pink-500 hover:border-transparent rounded" onClick={() => router.push('/login')}>Login</button>  {/* Hide this if logged in */}
+          </>
+        )}
             </ul>
           </nav>
         </div>
@@ -26,4 +52,3 @@ async function NavBar(){
       
     )
 }
-export default NavBar

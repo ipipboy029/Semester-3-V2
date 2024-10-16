@@ -24,7 +24,7 @@ namespace Sql_Injection
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string conn = @"Data Source=LAPTOP-73JV2AJ9;Initial Catalog= Login;Integrated Security=True";
+            string conn = "Server=LAPTOP-73JV2AJ9;Database=sql_injection;Integrated Security=True;";
 
             string userName = UserName.Text;
             string password = Password.Text;
