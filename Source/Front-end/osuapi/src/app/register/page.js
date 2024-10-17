@@ -18,7 +18,15 @@ function RegisterPage() {
       },
       body: JSON.stringify({ email, password }),
     });
+    const data = await response.json();
 
+    if (data.emailUsed) {
+      setError('This email is already used!');
+      alert('This email is already used!'); // Show the alert
+    } else {
+      // Handle successful registration
+      alert('Registration successful');
+    };
     if (response.ok) {
       router.push('/login'); // Redirect to login page after successful registration
     } else {

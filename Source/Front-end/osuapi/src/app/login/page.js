@@ -23,6 +23,7 @@ function LoginPage() {
     const data = await response.json();
     localStorage.setItem('user', JSON.stringify(data));
         router.push('http://localhost:3000/');
+        router.refresh();
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Login failed');

@@ -36,15 +36,29 @@ export default function NavBar(){
               <li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="beatmaps/">Beatmaps</a></li>
               <li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="player/">Search players</a></li>
               <li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="rankings/">Rankings</a></li>
-              {isLoggedIn && (<li class="text-gray-600 md:mr-12 hover:text-blue-600"><a href="post/">Posts</a></li>)}
+              {isLoggedIn && (
+              <li className="text-gray-600 md:mr-12 hover:text-blue-600"><a href="/post">Posts</a></li>
+            )}
 
-              {isLoggedIn ? (
-          <button class="bg-transparent hover:bg-pink-500 text-pink-400 font-semibold hover:text-white py-2 px-4 border border-pink-500 hover:border-transparent rounded" onClick={handleLogout}>Logout</button> // Show Logout button if user is logged in
-        ) : (
-          <>
-            <button class="bg-transparent hover:bg-pink-500 text-pink-400 font-semibold hover:text-white py-2 px-4 border border-pink-500 hover:border-transparent rounded" onClick={() => router.push('/login')}>Login</button>  {/* Hide this if logged in */}
-          </>
-        )}
+            {isLoggedIn ? (
+              <li>
+                <button 
+                  className="bg-transparent hover:bg-pink-500 text-pink-400 font-semibold hover:text-white py-2 px-4 border border-pink-500 hover:border-transparent rounded"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <li>
+                <button 
+                  className="bg-transparent hover:bg-pink-500 text-pink-400 font-semibold hover:text-white py-2 px-4 border border-pink-500 hover:border-transparent rounded"
+                  onClick={() => router.push('/login')}
+                >
+                  Login
+                </button>
+              </li>
+            )}
             </ul>
           </nav>
         </div>

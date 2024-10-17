@@ -38,3 +38,5 @@ C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\
 C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.pdb
 C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.genruntimeconfig.cache
 C:\Users\ivani\Documents\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\ref\BusinessLayer.dll
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\bin\Debug\net8.0\BusinessLayer.runtimeconfig.json
+C:\Users\Ivan Ip\OneDrive\Documenten\Fontys\Semester-3-V2\Source\Back-end\BusinessLayer\obj\Debug\net8.0\BusinessLayer.genruntimeconfig.cache
