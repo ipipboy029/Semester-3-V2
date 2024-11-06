@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddCors();
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<IUserService, UserService>(); 
@@ -22,7 +23,6 @@ string? clientId = builder.Configuration["ApiSettings:ClientId"];
 string? clientSecret = builder.Configuration["ApiSettings:ClientSecret"];
 builder.Services.AddSingleton((services) => new ApiService(clientId, clientSecret));
 builder.Services.AddDbContext<IApplicationDBContext, ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
-
 var app = builder.Build();
 
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

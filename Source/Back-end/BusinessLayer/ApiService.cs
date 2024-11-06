@@ -11,6 +11,7 @@ namespace BusinessLayer
         private readonly string _baseUrl = "https://osu.ppy.sh/api/v2/";
         private readonly string _clientId;
         private readonly string _clientSecret;
+        private readonly HttpClient _httpClient = new HttpClient();
 
         private AuthToken _authToken;
 
@@ -69,6 +70,28 @@ namespace BusinessLayer
                 jsonResponse = await response.Content.ReadAsStringAsync();
             }
             return jsonResponse;
+        }
+
+        public ApiService(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient();
+        }
+
+        public async Task<string> GetOsuPerformanceRankingAsync()
+        {
+            var url = "https://osu.ppy.sh/api/v2/rankings/osu/performance";
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _authToken.token);
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
+            }
         }
     }
 }

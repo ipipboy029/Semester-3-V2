@@ -28,5 +28,18 @@ namespace osu.Controllers
                 return Ok(result);
             }
         }
+        [HttpGet("performance")]
+        public async Task<IActionResult> GetPerformance()
+        {
+            try
+            {
+                var result = await _apiService.GetOsuPerformanceRankingAsync();
+                return Ok(result);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
