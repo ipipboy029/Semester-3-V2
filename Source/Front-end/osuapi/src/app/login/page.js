@@ -11,7 +11,7 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('https://localhost:7237/login', {
+    const response = await fetch('http://localhost:8080/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,8 +22,7 @@ function LoginPage() {
     if (response.ok) {
     const data = await response.json();
     localStorage.setItem('user', JSON.stringify(data));
-        router.push('http://localhost:3000/');
-        router.refresh();
+        window.location.href = '/'
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Login failed');

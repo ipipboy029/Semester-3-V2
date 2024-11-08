@@ -6,7 +6,7 @@ function RankingPage() {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://localhost:7237/Api/performance")
+    fetch("http://localhost:8080/Api/performance")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);  

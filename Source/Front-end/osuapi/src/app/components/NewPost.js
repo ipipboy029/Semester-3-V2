@@ -23,7 +23,7 @@ function AddPost({ onPostAdded }) {
     };
 
     // Send new post to backend
-    fetch('https://localhost:7237/Post', {
+    fetch('https://localhost:8080/Post', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

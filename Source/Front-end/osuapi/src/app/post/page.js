@@ -8,7 +8,7 @@ function PostPage() {
   const [showAddPost, setShowAddPost] = useState(false);  // State to toggle the AddPost form
 
   useEffect(() => {
-    fetch("https://localhost:7237/Post")
+    fetch("http://localhost:8080/Post")
       .then((res) => res.json())
       .then((data) => {
         setData(data);
