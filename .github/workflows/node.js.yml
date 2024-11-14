@@ -50,8 +50,8 @@ jobs:
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1
       with:
-        entryPoint: "sonar-scanner"  # This will trigger SonarScanner with default arguments
-        args: "-Dsonar.projectKey=TestProjectKeySchool -Dsonar.organization=ipipboy029 -Dsonar.projectName=osuapi -Dsonar.projectBaseDir=."  # Replace with your project details
+        # No need to set entryPoint unless specifically needed.
+        args: "-Dsonar.projectKey=TestProjectKeySchool -Dsonar.organization=ipipboy029 -Dsonar.projectName=osuapi -Dsonar.projectBaseDir=."
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Ensure your token is set in GitHub secrets
         JAVA_HOME: ${{ env.JAVA_HOME }}  # Make sure Java is available for SonarCloud
