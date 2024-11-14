@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     defaults:
       run: 
         working-directory: ./Source/Front-end/osuapi
@@ -40,7 +40,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-    - name: Set JAVA_HOME for SonarCloud to JDK 17
+    - name: Set JAVA_HOME for SonarCloud
       run: echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
     # Run SonarCloud analysis
     - name: SonarCloud Scan
