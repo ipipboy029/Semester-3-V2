@@ -54,8 +54,8 @@ jobs:
         args: "-Dsonar.projectKey=TestProjectKeySchool -Dsonar.organization=ipipboy029 -Dsonar.projectName=osuapi -Dsonar.projectBaseDir=."  # Replace with your project details
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Ensure your token is set in GitHub secrets
-        JAVA_HOME: ${{ env.JAVA_HOME }} 
-        SONAR_HOST_URL: "https://sonarcloud.io"# Make sure Java is available for SonarCloud
+        JAVA_HOME: ${{ env.JAVA_HOME }}  # Make sure Java is available for SonarCloud
+        SONAR_HOST_URL: "https://sonarcloud.io"  # Explicitly set SonarCloud's URL
 
     # Optionally, run tests after the SonarCloud scan if needed
     # - run: npm test
