@@ -46,6 +46,10 @@ jobs:
     - name: Set JAVA_HOME for SonarCloud
       run: echo "JAVA_HOME=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
 
+    # Set the Java version for SonarScanner explicitly (force it to use Java 17)
+    - name: Set SONAR_SCANNER_JAVA_OPTS
+      run: echo "SONAR_SCANNER_JAVA_OPTS=-Djava.home=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
+
     # Run SonarCloud scan
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1
@@ -62,6 +66,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         JAVA_HOME: ${{ env.JAVA_HOME }}
         SONAR_HOST_URL: "https://sonarcloud.io"
+        SONAR_SCANNER_JAVA_OPTS: ${{ env.SONAR_SCANNER_JAVA_OPTS }}
 
     # Optionally, run tests after the SonarCloud scan if needed
     # - run: npm test
