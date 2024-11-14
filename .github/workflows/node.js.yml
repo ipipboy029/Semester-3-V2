@@ -42,11 +42,15 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Set JAVA_HOME for SonarCloud (using the set up Java)
+    # Check Java Version
+    - name: Check Java Version
+      run: java -version
+
+    # Set JAVA_HOME for SonarCloud
     - name: Set JAVA_HOME for SonarCloud
       run: echo "JAVA_HOME=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
 
-    # Explicitly set SonarCloud to use Java 17 for scanning (this should fix the issue)
+    # Explicitly set SONAR_SCANNER_JAVA_OPTS to Java 17
     - name: Set SONAR_SCANNER_JAVA_OPTS to Java 17
       run: echo "SONAR_SCANNER_JAVA_OPTS=-Djava.home=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
 
