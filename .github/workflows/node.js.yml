@@ -1,6 +1,3 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: Node.js CI
 
 on:
@@ -20,16 +17,33 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
+
+    # Set up Node.js environment
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
+
+    # Install dependencies
     - run: npm ci
+
+    # Build the project (if needed)
     - run: npm run build --if-present
-    #- run: npm test
+
+    # Run SonarCloud analysis
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v1
+      with:
+        organization: ipipboy029  # Replace with your SonarCloud organization
+        projectKey: TestProjectKeySchool    # Replace with your SonarCloud project key
+        projectName: osuapi           # Replace with your project name
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Set the SONAR_TOKEN secret in GitHub repository settings
+
+    # Optionally, you can run tests after the SonarCloud scan if desired
+    # - run: npm test
