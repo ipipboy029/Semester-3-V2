@@ -39,6 +39,9 @@ jobs:
       with:
           java-version: '17'
           distribution: 'temurin'
+          
+    - name: Set JAVA_HOME for SonarCloud to JDK 17
+      run: echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
     # Run SonarCloud analysis
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1
@@ -47,7 +50,8 @@ jobs:
         projectKey: TestProjectKeySchool    # Replace with your SonarCloud project key
         projectName: osuapi           # Replace with your project name
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Set the SONAR_TOKEN secret in GitHub repository settings
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        JAVA_HOME: ${{ env.JAVA_HOME }}# Set the SONAR_TOKEN secret in GitHub repository settings
 
     # Optionally, you can run tests after the SonarCloud scan if desired
     # - run: npm test
