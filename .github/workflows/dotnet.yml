@@ -1,30 +1,54 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     defaults:
       run: 
         working-directory: ./Source/Back-end
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up .NET SDK
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
+        dotnet-version: '6.x' # Adjust to your project’s .NET version
+
+    # Step 3: Install SonarCloud Scanner for .NET
+    - name: Install SonarCloud Scanner for .NET
+      run: dotnet tool install --global dotnet-sonarscanner
+
+    # Step 4: Run SonarCloud Analysis Begin
+    - name: SonarCloud Begin
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet-sonarscanner begin /k:"ipipboy029_Semester-3-V2" /o:"ipipboy029" \
+           /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+           /d:sonar.host.url="https://sonarcloud.io"
+
+    # Step 5: Build the project
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-incremental
+
+    # Step 6: Test the project (optional but recommended)
     - name: Test
       run: dotnet test --no-build --verbosity normal
+
+    # Step 7: Run SonarCloud Analysis End
+    - name: SonarCloud End
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
