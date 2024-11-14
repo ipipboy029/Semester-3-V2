@@ -42,19 +42,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Check Java Version
+    # Check Java Version (optional but useful for debugging)
     - name: Check Java Version
       run: java -version
 
-    # Set JAVA_HOME for SonarCloud
-    - name: Set JAVA_HOME for SonarCloud
-      run: echo "JAVA_HOME=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
-
-    # Explicitly set SONAR_SCANNER_JAVA_OPTS to Java 17
-    - name: Set SONAR_SCANNER_JAVA_OPTS to Java 17
-      run: echo "SONAR_SCANNER_JAVA_OPTS=-Djava.home=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
-
-    # Run SonarCloud scan
+    # Run SonarCloud Scan with JAVA_HOME set to JDK 17
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1
       with:
@@ -68,9 +60,9 @@ jobs:
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index-lcov-report.json
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        JAVA_HOME: ${{ env.JAVA_HOME }}
+        JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}  # Ensure the correct JAVA_HOME is set
         SONAR_HOST_URL: "https://sonarcloud.io"
-        SONAR_SCANNER_JAVA_OPTS: ${{ env.SONAR_SCANNER_JAVA_OPTS }}
+        SONAR_SCANNER_JAVA_OPTS: -Djava.home=${{ steps.setup-java.outputs.java-home }} # Set Java home for the scanner
 
     # Optionally, run tests after the SonarCloud scan if needed
     # - run: npm test
