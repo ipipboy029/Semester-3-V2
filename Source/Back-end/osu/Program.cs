@@ -8,7 +8,13 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000",
+           builder => builder.WithOrigins("http://localhost:3000")
+                             .AllowAnyMethod()
+                             .AllowAnyHeader());
+});
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -25,7 +31,7 @@ builder.Services.AddSingleton((services) => new ApiService(clientId, clientSecre
 builder.Services.AddDbContext<IApplicationDBContext, ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseConnection")));
 var app = builder.Build();
 
-app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors("AllowLocalhost3000");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

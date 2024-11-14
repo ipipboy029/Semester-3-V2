@@ -39,6 +39,7 @@ function RankingPage() {
                 />
                 <div>
                   <h3 className="text-xl font-semibold text-purple-900">{ranking.user.username}</h3>
+                  <p className="text-sm text-gray-600">Rank: {ranking.global_rank}</p>
                   <p className="text-sm text-gray-600">Country: {ranking.user.country.name}</p>
                   <p className="text-sm text-gray-600">PP: {ranking.pp}</p>
                 </div>

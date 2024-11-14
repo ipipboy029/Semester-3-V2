@@ -41,5 +41,17 @@ namespace osu.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("player/{usernameOrId}/osu")]
+        public async Task<IActionResult> GetPlayer(string usernameOrId)
+        {
+            var playerData = await _apiService.GetPlayerDataAsync(usernameOrId);
+
+            if (playerData == null)
+            {
+                return NotFound("Player data could not be retrieved.");
+            }
+
+            return Ok(playerData);
+        }
     }
 }
