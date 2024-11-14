@@ -35,8 +35,8 @@ jobs:
     - name: SonarCloud Begin
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet-sonarscanner begin /k:"ipipboy029_Semester-3-V2" /o:"ipipboy029" \
-           /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+      run: dotnet-sonarscanner begin /k:"ipipboy029_Semester-3-V2" /o:"ipipboy029" /
+           /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /
            /d:sonar.host.url="https://sonarcloud.io"
 
     # Step 5: Build the project
