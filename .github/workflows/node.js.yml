@@ -46,8 +46,8 @@ jobs:
     - name: Set JAVA_HOME for SonarCloud
       run: echo "JAVA_HOME=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
 
-    # Set the Java version for SonarScanner explicitly (force it to use Java 17)
-    - name: Set SONAR_SCANNER_JAVA_OPTS
+    # Explicitly set SonarCloud to use Java 17 for scanning (this should fix the issue)
+    - name: Set SONAR_SCANNER_JAVA_OPTS to Java 17
       run: echo "SONAR_SCANNER_JAVA_OPTS=-Djava.home=${{ steps.setup-java.outputs.java-home }}" >> $GITHUB_ENV
 
     # Run SonarCloud scan
