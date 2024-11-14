@@ -50,11 +50,10 @@ jobs:
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1
       with:
-        # No need to set entryPoint unless specifically needed.
         args: "-Dsonar.projectKey=TestProjectKeySchool -Dsonar.organization=ipipboy029 -Dsonar.projectName=osuapi -Dsonar.projectBaseDir=."
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Ensure your token is set in GitHub secrets
-        JAVA_HOME: ${{ env.JAVA_HOME }}  # Make sure Java is available for SonarCloud
+        JAVA_HOME: ${{ env.JAVA_HOME }}  # Ensure Java 17 is used for the SonarCloud scan
         SONAR_HOST_URL: "https://sonarcloud.io"  # Explicitly set SonarCloud's URL
 
     # Optionally, run tests after the SonarCloud scan if needed
