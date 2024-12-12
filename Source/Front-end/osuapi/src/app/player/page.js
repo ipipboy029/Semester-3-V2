@@ -20,7 +20,11 @@ function PlayerPage() {
       }
   
       // Fetch data for the specific player
+<<<<<<< HEAD
       fetch(`https://localhost:7237/Api/player/${player}/osu`)
+=======
+      fetch(`http://localhost:8080/Api/player/${player}/osu`)
+>>>>>>> 6446dccd2dc1ca49272cbb20bd5a83637932babd
         .then((res) => res.json())
         .then((data) => {
           console.log(data); // Log the response to inspect the data
@@ -111,4 +115,8 @@ function PlayerPage() {
     );
 }
 
+<<<<<<< HEAD
 export default PlayerPage;
+=======
+export default PlayerPage;
+>>>>>>> 6446dccd2dc1ca49272cbb20bd5a83637932babd

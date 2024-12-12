@@ -104,7 +104,11 @@ namespace BusinessLayer
             var response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
+<<<<<<< HEAD
             {               
+=======
+            {
+>>>>>>> 6446dccd2dc1ca49272cbb20bd5a83637932babd
                 var jsonString = await response.Content.ReadAsStringAsync();
                 var playerData = JsonConvert.DeserializeObject<PlayerData>(jsonString);
                 return playerData;
