@@ -9,15 +9,19 @@ export default function NavBar() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const user = localStorage.getItem("user");
-      setIsLoggedIn(!!user);
+      const token = localStorage.getItem("jwtToken"); // Check if JWT token exists in localStorage
+      setIsLoggedIn(!!token); // If token exists, set isLoggedIn to true
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); 
-    setIsLoggedIn(false); 
-    router.push("/login"); 
+    localStorage.removeItem("jwtToken"); // Remove the JWT token on logout
+    setIsLoggedIn(false); // Update the state to reflect that the user is logged out
+    router.push("/login"); // Redirect to login page
+  };
+
+  const handleLoginRedirect = () => {
+    router.push("/login"); // Redirect to the login page if not logged in
   };
 
   return (
@@ -68,7 +72,7 @@ export default function NavBar() {
               <li>
                 <button
                   className="bg-transparent hover:bg-pink-500 text-pink-400 font-semibold hover:text-white py-2 px-4 border border-pink-500 hover:border-transparent rounded"
-                  onClick={() => router.push("/login")}
+                  onClick={handleLoginRedirect}
                 >
                   Login
                 </button>

@@ -11,7 +11,7 @@ function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:8080/register', {
+    const response = await fetch('https://localhost:7237/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ function RegisterPage() {
           <div>
               <button type="submit"
                   class="flex w-full justify-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">Sign
-                  In
+                  up
               </button>
           </div>
       </form>

@@ -16,6 +16,7 @@ namespace BusinessLayer.Interfaces
 
         public Task Save();
 
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         public Task<int> SaveChangesAsync();
     }
 }

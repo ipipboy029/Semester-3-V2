@@ -32,21 +32,15 @@ namespace osu.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            var user = await _userService.LoginUser(loginDto.Email, loginDto.Password);
-            if (user == null)
+            try
             {
-                return Unauthorized("Invalid credentials");
+                var response = await _userService.LoginUser(loginDto.Email, loginDto.Password);
+                return Ok(response); // Return the user and token in the response
             }
-
-            return Ok(new
+            catch (Exception ex)
             {
-                message = $"Welcome, {user.Email}!",  
-                user = new
-                {
-                    user.Id,
-                    user.Email
-                }
-            });
+                return Unauthorized(ex.Message); // Handle error and return unauthorized if login fails
+            }
         }
     }
 }

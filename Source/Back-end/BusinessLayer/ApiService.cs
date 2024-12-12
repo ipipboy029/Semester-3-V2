@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Models;
+﻿using Azure.Core;
+using BusinessLayer.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -91,6 +92,27 @@ namespace BusinessLayer
             else
             {
                 throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
+            }
+        }
+        public async Task<PlayerData> GetPlayerDataAsync(string usernameOrId)
+        {
+            var requestUrl = $"https://osu.ppy.sh/api/v2/users/{usernameOrId}/osu";
+
+            var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            request.Headers.Add("Authorization", $"Bearer {_authToken.token}");
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {               
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var playerData = JsonConvert.DeserializeObject<PlayerData>(jsonString);
+                return playerData;
+            }
+            else
+            {
+                Console.WriteLine($"Failed to retrieve player data: {response.StatusCode}");
+                return null;
             }
         }
     }

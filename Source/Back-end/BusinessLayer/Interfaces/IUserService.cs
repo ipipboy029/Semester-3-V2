@@ -11,6 +11,6 @@ namespace BusinessLayer.Interfaces
     {
         Task RegisterUser(string email, string password);
 
-        Task<User> LoginUser(string email, string password);
+        Task<LoginResponse> LoginUser(string email, string password);
     }
 }

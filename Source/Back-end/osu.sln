@@ -5,9 +5,13 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu", "osu\osu.csproj", "{C38DA9B7-98F4-441C-85FB-35F98919A3E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{1721A897-CA91-44B7-B7AA-79B819A02EDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{1721A897-CA91-44B7-B7AA-79B819A02EDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{FA09A43B-E9A3-4B4E-AABC-39CBEE1CAD73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{FA09A43B-E9A3-4B4E-AABC-39CBEE1CAD73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLayerTest", "BusinessLayerTest\BusinessLayerTest.csproj", "{E34476CB-FEAF-4AB4-BC08-458DAFD68745}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockDataAccessLayer", "MockDataAccessLayer\MockDataAccessLayer.csproj", "{6386C627-F572-4A1B-8D39-65FD48777D6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{FA09A43B-E9A3-4B4E-AABC-39CBEE1CAD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA09A43B-E9A3-4B4E-AABC-39CBEE1CAD73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA09A43B-E9A3-4B4E-AABC-39CBEE1CAD73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E34476CB-FEAF-4AB4-BC08-458DAFD68745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E34476CB-FEAF-4AB4-BC08-458DAFD68745}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E34476CB-FEAF-4AB4-BC08-458DAFD68745}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E34476CB-FEAF-4AB4-BC08-458DAFD68745}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6386C627-F572-4A1B-8D39-65FD48777D6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6386C627-F572-4A1B-8D39-65FD48777D6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6386C627-F572-4A1B-8D39-65FD48777D6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6386C627-F572-4A1B-8D39-65FD48777D6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
