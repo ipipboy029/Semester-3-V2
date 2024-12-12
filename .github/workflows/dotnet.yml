@@ -39,6 +39,10 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
+          name: Deploy with Watchtower
+          run: |
+            docker run -d \--name watchtower \-v /var/run/docker.sock:/var/run/docker.sock \
+            containrrr/watchtower \--interval 300 \--cleanup \${{ secrets.ipipboy029}}/osu-api
       - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
