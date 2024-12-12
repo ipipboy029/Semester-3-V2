@@ -60,13 +60,10 @@ function RegisterPage() {
 
           <div>
               <button type="submit"
-<<<<<<< HEAD
                   class="flex w-full justify-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">Sign
                   up
               </button>
-=======
-                  class="flex w-full justify-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">Make account</button>
->>>>>>> 6446dccd2dc1ca49272cbb20bd5a83637932babd
+                  <button class="flex w-full justify-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">Make account</button>
           </div>
       </form>
   </div>
