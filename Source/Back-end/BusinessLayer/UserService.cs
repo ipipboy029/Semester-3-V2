@@ -15,15 +15,16 @@ namespace BusinessLayer
     public class UserService : IUserService
     {
         private readonly IApplicationDBContext _dbContext;
-        private readonly PasswordHasher<User> _passwordHasher;
+        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IConfiguration _configuration;
 
-        public UserService(IApplicationDBContext dbContext, PasswordHasher<User> passwordHasher, IConfiguration configuration)
+        public UserService(IApplicationDBContext dbContext, IPasswordHasher<User> passwordHasher, IConfiguration configuration)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
             _configuration = configuration;
         }
+        public UserService() { }
 
         public async Task RegisterUser(string email, string password)
         {

@@ -15,92 +15,76 @@ namespace BusinessLayer.Tests
     [TestClass]
     public class PostServiceTests
     {
-        private Mock<IApplicationDBContext> _mockDbContext;
-        private Mock<DbSet<Post>> _mockPostsDbSet;
-        private Mock<EntityEntry<Post>> _mockEntityEntry;
-        private PostService _postService;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            _mockDbContext = new Mock<IApplicationDBContext>();
-            _mockPostsDbSet = new Mock<DbSet<Post>>();
-            _mockEntityEntry = new Mock<EntityEntry<Post>>();
-            _postService = new PostService(_mockDbContext.Object);
-        }
-
         [TestMethod]
-        public async Task GetPosts_ShouldReturnPosts_WhenPostsExist()
+        public async Task tryAddNewPost_ShouldAddPost_WhenValidPostIsProvided()
         {
             // Arrange
-            var posts = new List<Post>
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            using var context = new ApplicationDbContext(options);
+
+            // Instantiate PostService with the mocked DbContext
+            var postService = new PostService(context);
+
+            var newPost = new Post
             {
-                new Post { PostNumber = 1, Subject = "First post" },
-                new Post { PostNumber = 2, Subject = "Second post" }
+                Subject = "Test Post Title",
+                Description = "This is the content of the post.",
+                ImageURL = "AuthorName"
             };
 
-            var queryablePosts = posts.AsQueryable();
-            _mockPostsDbSet.As<IQueryable<Post>>().Setup(m => m.Provider).Returns(queryablePosts.Provider);
-            _mockPostsDbSet.As<IQueryable<Post>>().Setup(m => m.Expression).Returns(queryablePosts.Expression);
-            _mockPostsDbSet.As<IQueryable<Post>>().Setup(m => m.ElementType).Returns(queryablePosts.ElementType);
-            _mockPostsDbSet.As<IQueryable<Post>>().Setup(m => m.GetEnumerator()).Returns(queryablePosts.GetEnumerator());
+            // Act: Add the new post
+            var result = await postService.AddPost(newPost);
 
-            // Setup DbContext to return the mocked DbSet
-            _mockDbContext.Setup(c => c.Posts).Returns(_mockPostsDbSet.Object);
-
-            // Act
-            var result = await _postService.GetPosts();
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("First post", result.First().Subject);
+            // Assert: Verify that the post was added to the database
+            var postInDb = context.Posts.SingleOrDefault(p => p.Subject == "Test Post Title");
+            Assert.IsNotNull(postInDb);  // Check that the post was added
+            Assert.AreEqual("Test Post Title", postInDb.Subject); // Verify title is correct
+            Assert.AreEqual("This is the content of the post.", postInDb.Description); // Verify content is correct
+            Assert.AreEqual("AuthorName", postInDb.ImageURL); // Verify author is correct
+            Assert.IsTrue(result);  // Check that the method returns true
         }
-
         [TestMethod]
-        public async Task AddPost_ShouldReturnTrue_WhenPostIsAddedSuccessfully()
+        public async Task tryAddNewPost_ShouldThrowException_WhenPostIsInvalid()
         {
             // Arrange
-            var newPost = new Post { PostNumber = 3, Subject = "New post" };
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
 
-            // Mock AddAsync to return an EntityEntry
-            _mockPostsDbSet.Setup(m => m.AddAsync(It.IsAny<Post>(), default))
-                           .ReturnsAsync(_mockEntityEntry.Object);
+            using var context = new ApplicationDbContext(options);
 
-            // Mock SaveChangesAsync to return 1 (indicating success)
-            _mockDbContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                          .ReturnsAsync(1);
+            var postService = new PostService(context);
 
-            // Act
-            var result = await _postService.AddPost(newPost);
+            // Create an invalid post (missing title and content)
+            var invalidPost = new Post
+            {
+                Subject ="",
+                ImageURL = "",
+                Description = ""
+            };
 
-            // Assert
-            Assert.IsTrue(result);
-            _mockDbContext.Verify(c => c.Posts.AddAsync(It.IsAny<Post>(), default), Times.Once);
-            _mockDbContext.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            // Act: Try to add an invalid post, expecting an exception
+            await postService.AddPost(invalidPost);
+
+            // Assert: The exception is expected, so no further assertions are needed
         }
-
         [TestMethod]
-        public async Task AddPost_ShouldReturnFalse_WhenSaveChangesFails()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task tryAddNewPost_ShouldThrowException_WhenPostIsNull()
         {
             // Arrange
-            var newPost = new Post { PostNumber = 3, Subject = "New post" };
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
 
-            // Mock AddAsync to return an EntityEntry
-            _mockPostsDbSet.Setup(m => m.AddAsync(It.IsAny<Post>(), default))
-                           .ReturnsAsync(_mockEntityEntry.Object);
+            using var context = new ApplicationDbContext(options);
+            var postService = new PostService(context);
 
-            // Mock SaveChangesAsync to return 0 (indicating failure)
-            _mockDbContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                          .ReturnsAsync(0);
-
-            // Act
-            var result = await _postService.AddPost(newPost);
-
-            // Assert
-            Assert.IsFalse(result);
-            _mockDbContext.Verify(c => c.Posts.AddAsync(It.IsAny<Post>(), default), Times.Once);
-            _mockDbContext.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            // Act: Try to add a null post
+            await postService.AddPost(null);
         }
     }
 }

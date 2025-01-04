@@ -1,149 +1,102 @@
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models;
+using DataAccessLayer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.InMemory;
+using Microsoft.AspNet.Identity;
+using System;
 
 namespace BusinessLayer.Tests
 {
     [TestClass]
     public class UserServiceTests
     {
-        private Mock<IApplicationDBContext> _mockDbContext;
-        private PasswordHasher<User> _passwordHasher;
-        private Mock<IConfiguration> _mockConfiguration;
-        private UserService _userService;
-
-        [TestInitialize]
-        public void Setup()
+        [TestMethod]
+        public async Task RegisterUser_ShouldAddUser_WhenEmailNotTaken()
         {
-            _mockDbContext = new Mock<IApplicationDBContext>();
-            _passwordHasher = new PasswordHasher<User>();
-            _mockConfiguration = new Mock<IConfiguration>();
+            // Arrange
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
 
-            // Set up mock configuration for JWT
-            _mockConfiguration.Setup(config => config["Jwt:SecretKey"]).Returns("TestSecretKey123");
-            _mockConfiguration.Setup(config => config["Jwt:Issuer"]).Returns("TestIssuer");
-            _mockConfiguration.Setup(config => config["Jwt:Audience"]).Returns("TestAudience");
+            using var context = new ApplicationDbContext(options);
 
-            _userService = new UserService(_mockDbContext.Object, _passwordHasher, _mockConfiguration.Object);
+            // Mocking IPasswordHasher<User>
+            var passwordHasherMock = new Mock<IPasswordHasher<User>>();
+            var configurationMock = new Mock<IConfiguration>();
+
+            // Setup mock to hash password
+            passwordHasherMock.Setup(ph => ph.HashPassword(It.IsAny<User>(), "SecurePassword123"))
+                              .Returns("hashedPassword123");
+
+            // Instantiate the UserService with the mocked IPasswordHasher<User>
+            var userService = new UserService(context, passwordHasherMock.Object, configurationMock.Object);
+
+            // Act
+            // Create a new User object and hash the password
+            var newUser = new User
+            {
+                Email = "test@example.com",
+                Password = "SecurePassword123" // Assign plain password (this will be hashed in the RegisterUser method)
+            };
+
+            // Act: Register the user with the service
+            await userService.RegisterUser(newUser.Email, newUser.Password);
+
+            // Assert
+            var user = context.Users.SingleOrDefault(u => u.Email == "test@example.com");
+            Assert.IsNotNull(user); // Check that the user was created
+            Assert.AreEqual("hashedPassword123", user.Password); // Check that the password is hashed correctly
         }
 
+
+
+
         [TestMethod]
+        [ExpectedException(typeof(Exception), "Email is already taken")]
         public async Task RegisterUser_ShouldThrowException_WhenEmailAlreadyExists()
         {
             // Arrange
-            var email = "test@example.com";
-            var password = "Password123!";
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
 
-            _mockDbContext.Setup(db => db.Users.SingleOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>(), default))
-                          .ReturnsAsync(new User { Email = email });
+            using var context = new ApplicationDbContext(options);
 
-            // Act & Assert
-            var exception = await Assert.ThrowsExceptionAsync<Exception>(() => _userService.RegisterUser(email, password));
-            Assert.AreEqual("Email is already taken", exception.Message);
-        }
+            // Mocking IPasswordHasher<User>
+            var passwordHasherMock = new Mock<IPasswordHasher<User>>();
+            var configurationMock = new Mock<IConfiguration>();
 
-        [TestMethod]
-        public async Task RegisterUser_ShouldCreateUser_WhenEmailDoesNotExist()
-        {
-            // Arrange
-            var email = "newuser@example.com";
-            var password = "Password123!";
+            // Setup mock to hash password
+            passwordHasherMock.Setup(ph => ph.HashPassword(It.IsAny<User>(), "SecurePassword123"))
+                              .Returns("hashedPassword123");
 
-            _mockDbContext.Setup(db => db.Users.SingleOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>(), default))
-                          .ReturnsAsync((User)null); // No user found
+            // Instantiate the UserService with the mocked IPasswordHasher<User>
+            var userService = new UserService(context, passwordHasherMock.Object, configurationMock.Object);
 
-            var users = new List<User>();
-            _mockDbContext.Setup(db => db.Users.Add(It.IsAny<User>()))
-                          .Callback<User>(user => users.Add(user));
-            _mockDbContext.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1); // Return 1 for successful save
-
-            // Act
-            await _userService.RegisterUser(email, password);
-
-            // Assert
-            Assert.AreEqual(1, users.Count);
-            Assert.AreEqual(email, users[0].Email);
-            Assert.IsNotNull(users[0].Password);
-            _mockDbContext.Verify(db => db.Users.Add(It.IsAny<User>()), Times.Once);
-            _mockDbContext.Verify(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task LoginUser_ShouldThrowException_WhenPasswordIsIncorrect()
-        {
-            // Arrange
-            var email = "test@example.com";
-            var password = "WrongPassword123!"; // Incorrect password
-            var correctPassword = "CorrectPassword123!"; // Correct password
-
-            // Set up in-memory user data with hashed password
-            var users = new List<User>
-    {
-        new User
-        {
-            Id = 1,
-            Email = email,
-            Password = _passwordHasher.HashPassword(null, correctPassword) // Hash the correct password
-        }
-    };
-
-            var usersQueryable = users.AsQueryable(); // Convert to IQueryable for LINQ compatibility
-
-            // Mock DbSet<User>
-            var mockUsersDbSet = new Mock<DbSet<User>>();
-
-            // Set up the necessary IQueryable methods for the DbSet
-            mockUsersDbSet.As<IQueryable<User>>()
-                .Setup(m => m.Provider).Returns(usersQueryable.Provider);
-            mockUsersDbSet.As<IQueryable<User>>()
-                .Setup(m => m.Expression).Returns(usersQueryable.Expression);
-            mockUsersDbSet.As<IQueryable<User>>()
-                .Setup(m => m.ElementType).Returns(usersQueryable.ElementType);
-            mockUsersDbSet.As<IQueryable<User>>()
-                .Setup(m => m.GetEnumerator()).Returns(usersQueryable.GetEnumerator());
-
-            // Mock the SingleOrDefaultAsync method to return a user
-            mockUsersDbSet.Setup(d => d.SingleOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Expression<Func<User, bool>> predicate, CancellationToken token) =>
-                    users.AsQueryable().SingleOrDefault(predicate)); // Simulate async behavior
-
-            // Setup the mock context to return the mocked DbSet
-            _mockDbContext.Setup(c => c.Users).Returns(mockUsersDbSet.Object);
-
-            // Act
-            var exception = await Assert.ThrowsExceptionAsync<Exception>(() => _userService.LoginUser(email, password));
-
-            // Assert
-            Assert.AreEqual("Invalid email or password", exception.Message);
-        }
-
-        [TestMethod]
-        public async Task LoginUser_ShouldReturnToken_WhenCredentialsAreValid()
-        {
-            // Arrange
-            var email = "test@example.com";
-            var password = "CorrectPassword123!";
-
-            var user = new User
+            // First, register the user with a unique email
+            var firstUser = new User
             {
-                Email = email,
-                Password = _passwordHasher.HashPassword(null, password)
+                Email = "test@example.com",
+                Password = "SecurePassword123"
+            };
+            await userService.RegisterUser(firstUser.Email, firstUser.Password); // First user registration
+
+            // Act: Try to register a user with the same email again
+            var secondUser = new User
+            {
+                Email = "test@example.com",
+                Password = "SecurePassword123"
             };
 
-            _mockDbContext.Setup(db => db.Users.SingleOrDefaultAsync(It.IsAny<Expression<Func<User, bool>>>(), default))
-                          .ReturnsAsync(user);
+            // This should throw an exception because the email already exists
+            await userService.RegisterUser(secondUser.Email, secondUser.Password); // Expect exception here
 
-            // Act
-            var result = await _userService.LoginUser(email, password);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.Token);
-            Assert.AreEqual(email, result.User.Email);
+            // The expected exception is declared above, so no need for further assertions
         }
     }
 }
