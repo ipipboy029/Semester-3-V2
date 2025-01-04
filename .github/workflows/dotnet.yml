@@ -54,7 +54,6 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-
       # Step 6: Build and test the project
       - name: Build and test
         env:
@@ -64,7 +63,6 @@ jobs:
           dotnet restore
           dotnet build --no-restore
           dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
-
       # Step 7: Prepare and submit analysis to SonarCloud
       - name: Analyze with SonarCloud
         env:
@@ -76,8 +74,11 @@ jobs:
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-      # Step 8: Deploy with Watchtower
-      - name: Deploy with Watchtower
+  # Step 8: Deploy with Watchtower (on a Linux runner)
+  deploy-watchtower:
+    name: Deploy with Watchtower
+    runs-on: ubuntu-latest  # Use a Linux runner here
+    steps:
+      - name: Run Watchtower
         run: |
           docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --interval 300 --cleanup
-        shell: bash
