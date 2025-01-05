@@ -26,7 +26,7 @@ namespace BusinessLayer.Tests
             using var context = new ApplicationDbContext(options);
 
             // Mocking IPasswordHasher<User>
-            var passwordHasherMock = new Mock<IPasswordHasher<User>>();
+            var passwordHasherMock = new Mock<PasswordHasher<User>>();
             var configurationMock = new Mock<IConfiguration>();
 
             // Setup mock to hash password
@@ -68,7 +68,7 @@ namespace BusinessLayer.Tests
             using var context = new ApplicationDbContext(options);
 
             // Mocking IPasswordHasher<User>
-            var passwordHasherMock = new Mock<IPasswordHasher<User>>();
+            var passwordHasherMock = new Mock<PasswordHasher<User>>();
             var configurationMock = new Mock<IConfiguration>();
 
             // Setup mock to hash password
