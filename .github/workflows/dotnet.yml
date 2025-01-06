@@ -85,3 +85,12 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.cobertura.reportsPaths="./TestResults/Cobertura/coverage.cobertura.xml"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+  # Step 11: Deploy with Watchtower (on a Linux runner)
+  deploy-watchtower:
+    name: Deploy with Watchtower
+    runs-on: ubuntu-latest  # Use a Linux runner here
+    steps:
+      - name: Run Watchtower
+        run: |
+          docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --interval 300 --cleanup
