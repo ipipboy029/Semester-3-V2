@@ -59,9 +59,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet restore
-          dotnet build --no-restore
-          dotnet test --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+          dotnet restore ./Source/Back-end/osu.sln
+          dotnet build ./Source/Back-end/osu.sln --no-restore
+          dotnet test ./Source/Back-end/osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
 
       # Step 7: Install ReportGenerator (if needed)
       - name: Install ReportGenerator
@@ -69,7 +69,7 @@ jobs:
 
       # Step 8: Generate Cobertura format
       - name: Generate Cobertura format
-        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+        run: reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
 
       # Step 9: Verify Cobertura file
       - name: Verify Cobertura file
