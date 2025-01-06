@@ -59,9 +59,13 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet restore ./osu.sln  # Make sure the correct path is provided
+          dotnet restore ./osu.sln
           dotnet build ./osu.sln --no-restore
           dotnet test ./osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+
+      # Debug: List the files in the TestResults directory
+      - name: List TestResults directory
+        run: dir ./TestResults
 
       # Step 7: Install ReportGenerator (if needed)
       - name: Install ReportGenerator
@@ -69,13 +73,13 @@ jobs:
 
       # Step 8: Generate Cobertura format
       - name: Generate Cobertura format
-        run: reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
 
-      # Step 9: Verify Cobertura file
+      # Debug: Verify Cobertura file
       - name: Verify Cobertura file
         run: dir ./TestResults/Cobertura
 
-      # Step 10: Prepare and submit analysis to SonarCloud
+      # Step 9: Prepare and submit analysis to SonarCloud
       - name: Analyze with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,7 +90,7 @@ jobs:
           dotnet build ./osu.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-  # Step 11: Deploy with Watchtower (on a Linux runner)
+  # Step 10: Deploy with Watchtower (on a Linux runner)
   deploy-watchtower:
     name: Deploy with Watchtower
     runs-on: ubuntu-latest  # Use a Linux runner here
