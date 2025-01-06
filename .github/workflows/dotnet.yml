@@ -62,8 +62,8 @@ jobs:
           dotnet restore
           dotnet build --no-restore
           dotnet test --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
-        
-      # Step 7: Install ReportGenerator (if needed)
+
+      # Step 7: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
@@ -71,14 +71,17 @@ jobs:
       - name: Generate OpenCover format
         run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/OpenCover" -reporttypes:OpenCover
 
-      # Step 9: Prepare and submit analysis to SonarCloud
+      # Step 9: Verify OpenCover file
+      - name: Verify OpenCover file
+        run: dir ./TestResults/OpenCover
+
+      # Step 10: Prepare and submit analysis to SonarCloud
       - name: Analyze with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./TestResults/OpenCover/coverage.opencover.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/OpenCover/coverage.opencover.xml"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
