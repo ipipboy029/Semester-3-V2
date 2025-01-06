@@ -13,7 +13,7 @@ jobs:
     name: Build, test, and analyze
     runs-on: windows-latest
     defaults:
-      run: 
+      run:
         working-directory: ./Source/Back-end
     steps:
       # Step 1: Set up JDK 17 (required for SonarCloud)
@@ -63,17 +63,17 @@ jobs:
           dotnet build --no-restore
           dotnet test --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
 
-      # Step 7: Install ReportGenerator
+      # Step 7: Install ReportGenerator (if needed)
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-      # Step 8: Generate OpenCover format
-      - name: Generate OpenCover format
-        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/OpenCover" -reporttypes:OpenCover
+      # Step 8: Generate Cobertura format
+      - name: Generate Cobertura format
+        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
 
-      # Step 9: Verify OpenCover file
-      - name: Verify OpenCover file
-        run: dir ./TestResults/OpenCover
+      # Step 9: Verify Cobertura file
+      - name: Verify Cobertura file
+        run: dir ./TestResults/Cobertura
 
       # Step 10: Prepare and submit analysis to SonarCloud
       - name: Analyze with SonarCloud
@@ -82,6 +82,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/OpenCover/coverage.opencover.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.cobertura.reportsPaths="./TestResults/Cobertura/coverage.cobertura.xml"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
