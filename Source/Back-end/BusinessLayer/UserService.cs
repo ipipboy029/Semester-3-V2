@@ -25,6 +25,7 @@ namespace BusinessLayer
             _configuration = configuration;
         }
         public UserService() { }
+        public UserService(IApplicationDBContext dbContext, PasswordHasher<User> passwordHasher) { }
 
         public async Task RegisterUser(string email, string password)
         {

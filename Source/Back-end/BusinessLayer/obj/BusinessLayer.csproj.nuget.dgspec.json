@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Ivan Ip\\OneDrive\\Documenten\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj": {}
+    "C:\\Users\\ivani\\Documents\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Ivan Ip\\OneDrive\\Documenten\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj": {
+    "C:\\Users\\ivani\\Documents\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Ivan Ip\\OneDrive\\Documenten\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj",
+        "projectUniqueName": "C:\\Users\\ivani\\Documents\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj",
         "projectName": "BusinessLayer",
-        "projectPath": "C:\\Users\\Ivan Ip\\OneDrive\\Documenten\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj",
-        "packagesPath": "C:\\Users\\Ivan Ip\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Ivan Ip\\OneDrive\\Documenten\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\obj\\",
+        "projectPath": "C:\\Users\\ivani\\Documents\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj",
+        "packagesPath": "C:\\Users\\ivani\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ivani\\Documents\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ivan Ip\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ivani\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
