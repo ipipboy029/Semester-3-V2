@@ -16,7 +16,7 @@ jobs:
       run:
         working-directory: ./Source/Back-end
     steps:
-      # Step 1: Set up JDK 17 (required for SonarQube)
+      # Step 1: Set up JDK 17 (required for SonarCloud)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -28,16 +28,16 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for better analysis relevancy
 
-      # Step 3: Cache SonarQube packages
-      - name: Cache SonarQube packages
+      # Step 3: Cache SonarQube Cloud packages
+      - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      # Step 4: Cache SonarQube scanner
-      - name: Cache SonarQube scanner
+      # Step 4: Cache SonarQube Cloud scanner
+      - name: Cache SonarQube Cloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v4
         with:
@@ -45,14 +45,14 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      # Step 5: Install SonarQube scanner
-      - name: Install SonarQube scanner
+      # Step 5: Install SonarQube Cloud scanner
+      - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-
+      
       # Step 6: Start SonarScanner
       - name: Start SonarScanner
         env:
@@ -76,16 +76,16 @@ jobs:
       - name: List TestResults directory
         run: dir ./TestResults
 
-      # Step 8: Install ReportGenerator
+      # Step 8: Install ReportGenerator (if needed)
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-      # Step 9: Generate SonarQube coverage format
-      - name: Generate SonarQube coverage format
+      # Step 9: Generate Cobertura format
+      - name: Generate Cobertura format
         run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:SonarQube
 
-      # Debug: Verify the generated coverage report
-      - name: Verify coverage report
+      # Debug: Verify Cobertura file
+      - name: Verify Cobertura file
         run: dir ./TestResults/Cobertura
 
       # Step 10: End SonarScanner
@@ -95,7 +95,7 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
+  
   # Step 11: Deploy with Watchtower (on a Linux runner)
   deploy-watchtower:
     name: Deploy with Watchtower
