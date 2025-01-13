@@ -87,11 +87,13 @@ jobs:
 
       # Step 10: Generate Cobertura format
       - name: Generate Cobertura format
-        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+        run: reportgenerator "-reports:${{ github.workspace }}\TestResults\*.trx" "-targetdir:${{ github.workspace }}\TestResults\Cobertura" -reporttypes:Cobertura
 
       # Debug: Verify Cobertura file
       - name: Verify Cobertura file
-        run: dir ./TestResults/Cobertura
+        shell: powershell
+        run: |
+          dir ./TestResults/Cobertura
 
       # Step 11: End SonarScanner
       - name: End SonarScanner
@@ -100,21 +102,24 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-          # Step to list contents of TestResults directory for debugging
+
+      # Debug step to check the contents of the TestResults directory
       - name: List TestResults directory
         run: dir ./TestResults
 
-# Debug step to check the Cobertura directory
+      # Debug step to check the Cobertura directory
       - name: List Cobertura directory
         run: dir ./TestResults/Cobertura
 
-# Debug step to verify the contents of the report generated
+      # Debug step to verify the contents of the Cobertura report
       - name: Verify the contents of the generated Cobertura report
-        run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
-        
+        shell: powershell
+        run: Get-Content ./TestResults/Cobertura/coverage.sonarqube.xml
+
+      # Debug step to list .trx files
       - name: List TestResults .trx files
         run: dir ./TestResults/*.trx
-        
+
   deploy-watchtower:
     name: Deploy with Watchtower
     runs-on: ubuntu-latest  # Use a Linux runner here
