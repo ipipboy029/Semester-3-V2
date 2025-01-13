@@ -75,40 +75,28 @@ jobs:
         run: |
           dotnet restore ./osu.sln
           dotnet build ./osu.sln --no-restore
-          dotnet test ./osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
-              dotnet restore ./osu.sln
-              dir ./TestResults
+          dotnet test ./osu.sln --no-build --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults --verbosity detailed
 
-      # Debug: List files in TestResults directory after test run
-      - name: List TestResults directory after test run
+      # Debug: List the files in the TestResults directory
+      - name: List TestResults directory
         run: dir ./TestResults
-
-      # Debug: List .trx files in TestResults directory
-      - name: List .trx files in TestResults directory
-        run: dir ./TestResults/*.trx
-
-      # Debug: Check if .trx file exists after test run
-      - name: Verify .trx file exists
-        run: |
-          if (Test-Path "./TestResults/test_results.trx") {
-            Write-Host "TRX file exists!"
-          } else {
-            Write-Host "TRX file does not exist."
-          }
 
       # Step 9: Install ReportGenerator (if needed)
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
+      # Debug: List all .trx files in the TestResults directory
+      - name: List TestResults .trx files
+        run: dir ./TestResults/*.trx
+
       # Step 10: Generate Cobertura format
       - name: Generate Cobertura format
-        run: reportgenerator "-reports:${{ github.workspace }}\TestResults\*.trx" "-targetdir:${{ github.workspace }}\TestResults\Cobertura" -reporttypes:Cobertura
+        run: |
+          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
 
       # Debug: Verify Cobertura file
       - name: Verify Cobertura file
-        shell: powershell
-        run: |
-          dir ./TestResults/Cobertura
+        run: dir ./TestResults/Cobertura
 
       # Step 11: End SonarScanner
       - name: End SonarScanner
@@ -118,27 +106,19 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-      # Debug step to check the contents of the TestResults directory
-      - name: List TestResults directory
-        run: dir ./TestResults
-
       # Debug step to check the Cobertura directory
       - name: List Cobertura directory
         run: dir ./TestResults/Cobertura
 
-      # Debug step to verify the contents of the Cobertura report
+      # Debug step to verify the contents of the report generated
       - name: Verify the contents of the generated Cobertura report
-        shell: powershell
-        run: Get-Content ./TestResults/Cobertura/coverage.sonarqube.xml
-
-      # Debug step to list .trx files
-      - name: List TestResults .trx files
-        run: dir ./TestResults/*.trx
+        run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
 
   deploy-watchtower:
     name: Deploy with Watchtower
     runs-on: ubuntu-latest  # Use a Linux runner here
     steps:
+      # Step: Run Watchtower
       - name: Run Watchtower
         run: |
           docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --interval 300 --cleanup
