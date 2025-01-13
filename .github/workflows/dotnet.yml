@@ -76,6 +76,8 @@ jobs:
           dotnet restore ./osu.sln
           dotnet build ./osu.sln --no-restore
           dotnet test ./osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+              dotnet restore ./osu.sln
+              dir ./TestResults
 
       # Debug: List files in TestResults directory after test run
       - name: List TestResults directory after test run
