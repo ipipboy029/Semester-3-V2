@@ -87,7 +87,7 @@ jobs:
 
       # Step 10: Generate Cobertura format
       - name: Generate Cobertura format
-        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:SonarQube
+        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
 
       # Debug: Verify Cobertura file
       - name: Verify Cobertura file
@@ -111,7 +111,10 @@ jobs:
 # Debug step to verify the contents of the report generated
       - name: Verify the contents of the generated Cobertura report
         run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
-
+        
+      - name: List TestResults .trx files
+        run: dir ./TestResults/*.trx
+        
   deploy-watchtower:
     name: Deploy with Watchtower
     runs-on: ubuntu-latest  # Use a Linux runner here
