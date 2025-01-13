@@ -77,15 +77,15 @@ jobs:
           dotnet build ./osu.sln --no-restore
           dotnet test ./osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
 
-      # Debug: List the files in the TestResults directory
-      - name: List TestResults directory
+      # Debug: List files in TestResults directory after test run
+      - name: List TestResults directory after test run
         run: dir ./TestResults
 
       # Debug: List .trx files in TestResults directory
       - name: List .trx files in TestResults directory
         run: dir ./TestResults/*.trx
 
-      # Debug: Check if .trx files exist after test run
+      # Debug: Check if .trx file exists after test run
       - name: Verify .trx file exists
         run: |
           if (Test-Path "./TestResults/test_results.trx") {
