@@ -81,13 +81,18 @@ jobs:
       - name: List TestResults directory
         run: dir ./TestResults
 
+      # Debug: List .trx files in TestResults directory
+      - name: List .trx files in TestResults directory
+        run: dir ./TestResults/*.trx
+
       # Step 9: Install ReportGenerator (if needed)
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-      # Debug: List .trx files in the TestResults directory
-      - name: List .trx files in TestResults directory
-        run: dir ./TestResults/*.trx
+      # Debug: Check contents of the .trx files
+      - name: Verify .trx file content
+        run: |
+          cat ./TestResults/test_results.trx
 
       # Step 10: Generate Cobertura format
       - name: Generate Cobertura format
