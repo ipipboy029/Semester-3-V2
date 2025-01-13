@@ -82,7 +82,7 @@ jobs:
 
       # Step 9: Generate Cobertura format
       - name: Generate Cobertura format
-        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+        run: reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:SonarQube
 
       # Debug: Verify Cobertura file
       - name: Verify Cobertura file
