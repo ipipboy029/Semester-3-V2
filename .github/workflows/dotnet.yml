@@ -75,30 +75,34 @@ jobs:
         run: |
           dotnet restore ./osu.sln
           dotnet build ./osu.sln --no-restore
-          dotnet test ./osu.sln --no-build --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults --verbosity detailed
+          dotnet test ./osu.sln --no-build --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults --collect:"Code Coverage"
 
       # Debug: List the files in the TestResults directory
       - name: List TestResults directory
         run: dir ./TestResults
 
-      # Step 9: Install ReportGenerator (if needed)
+      # Debug: List .trx files in the TestResults directory
+      - name: List .trx files in TestResults
+        run: dir ./TestResults/*.trx
+
+      # Step 10: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-      # Debug: List all .trx files in the TestResults directory
-      - name: List TestResults .trx files
-        run: dir ./TestResults/*.trx
-
-      # Step 10: Generate Cobertura format
+      # Step 11: Generate Cobertura format
       - name: Generate Cobertura format
         run: |
           reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
 
-      # Debug: Verify Cobertura file
-      - name: Verify Cobertura file
+      # Debug: List Cobertura directory
+      - name: List Cobertura directory
         run: dir ./TestResults/Cobertura
 
-      # Step 11: End SonarScanner
+      # Debug: Verify the contents of the generated Cobertura report
+      - name: Verify the contents of the generated Cobertura report
+        run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
+
+      # Step 12: End SonarScanner
       - name: End SonarScanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -106,19 +110,10 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
-      # Debug step to check the Cobertura directory
-      - name: List Cobertura directory
-        run: dir ./TestResults/Cobertura
-
-      # Debug step to verify the contents of the report generated
-      - name: Verify the contents of the generated Cobertura report
-        run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
-
   deploy-watchtower:
     name: Deploy with Watchtower
     runs-on: ubuntu-latest  # Use a Linux runner here
     steps:
-      # Step: Run Watchtower
       - name: Run Watchtower
         run: |
           docker run -d --name watchtower -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --interval 300 --cleanup
