@@ -85,6 +85,10 @@ jobs:
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
+      # Debug: List .trx files in the TestResults directory
+      - name: List .trx files in TestResults directory
+        run: dir ./TestResults/*.trx
+
       # Step 10: Generate Cobertura format
       - name: Generate Cobertura format
         run: reportgenerator "-reports:${{ github.workspace }}\TestResults\*.trx" "-targetdir:${{ github.workspace }}\TestResults\Cobertura" -reporttypes:Cobertura
