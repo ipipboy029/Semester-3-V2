@@ -85,14 +85,18 @@ jobs:
       - name: List .trx files in TestResults directory
         run: dir ./TestResults/*.trx
 
+      # Debug: Check if .trx files exist after test run
+      - name: Verify .trx file exists
+        run: |
+          if (Test-Path "./TestResults/test_results.trx") {
+            Write-Host "TRX file exists!"
+          } else {
+            Write-Host "TRX file does not exist."
+          }
+
       # Step 9: Install ReportGenerator (if needed)
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-      # Debug: Check contents of the .trx files
-      - name: Verify .trx file content
-        run: |
-          cat ./TestResults/test_results.trx
 
       # Step 10: Generate Cobertura format
       - name: Generate Cobertura format
