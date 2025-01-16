@@ -58,7 +58,7 @@ jobs:
       # Step 7: Run tests with coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet test osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+          dotnet test osu.sln --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
 
       # Step 8: Debug - List TestResults directory
