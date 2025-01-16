@@ -42,66 +42,58 @@ jobs:
       - name: Install dependencies
         run: dotnet restore osu.sln
 
-      # Step 5: Run SonarScanner Begin
+      # Step 5: Run Sonar Scanner Begin
       - name: Run SonarScanner Begin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet-sonarscanner begin `
-            /k:"TestProjectKeySchool" `
-            /o:"ipipboy029" `
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.cs.opencover.reportsPaths="./TestResults/OpenCover/coverage.opencover.xml"
+          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml"
 
-      # Step 6: Build solution
+      # Step 6: Build the solution
       - name: Build solution
-        run: dotnet build osu.sln --configuration Release
+        run: dotnet build osu.sln --no-restore --configuration Release
 
-      # Step 7: Run tests with Coverlet to collect OpenCover format code coverage
-      - name: Run tests and collect OpenCover coverage
+      # Step 7: Run tests with coverage
+      - name: Run tests and collect coverage
         run: |
-          dotnet test osu.sln --logger "trx;LogFileName=test_results.trx" -- /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/OpenCover/
+          dotnet test osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+        continue-on-error: true
 
-      # Step 8: List runsettings files (debugging step)
-      - name: List runsettings files
-        run: |
-          echo "Looking for runsettings files..."
-          dir **/*.runsettings
+      # Step 8: Debug - List TestResults directory
+      - name: Debug TestResults directory
+        run: dir ./TestResults
 
-      # Step 9: Install ReportGenerator (only once)
+      # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-      # Step 10: Generate OpenCover format using ReportGenerator
-      - name: Generate OpenCover format
+      # Step 10: Generate Cobertura format
+      - name: Generate Cobertura format
         run: |
-          mkdir -p ./TestResults/OpenCover
-          reportgenerator "-reports:./TestResults/OpenCover/coverage.opencover.xml" "-targetdir:./TestResults/OpenCover" -reporttypes:"OpenCover"
-
-      # Step 11: Debug OpenCover Directory and Content
-      - name: Verify OpenCover Directory and Content
-        run: |
-          echo "Contents of OpenCover directory:"
-          dir ./TestResults/OpenCover
-          echo "Contents of OpenCover file:"
-          cat ./TestResults/OpenCover/coverage.opencover.xml
+          mkdir -p ./TestResults/Cobertura
+          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
         continue-on-error: true
 
-      # Step 12: Run SonarScanner End
+      # Step 11: Debug - Verify Cobertura report
+      - name: Verify Cobertura directory
+        run: dir ./TestResults/Cobertura
+
+      - name: Display contents of Cobertura report
+        run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
+        continue-on-error: true
+
+      # Step 12: Run Sonar Scanner End
       - name: Run SonarScanner End
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-        continue-on-error: true
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   deploy:
     name: Deploy with Watchtower
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Pull and deploy using Watchtower
       - name: Pull and deploy using Watchtower
         run: |
           docker run -d --name watchtower \
