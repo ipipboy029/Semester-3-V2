@@ -59,23 +59,17 @@ jobs:
       # Step 6: Build solution
       - name: Build solution
         run: dotnet build osu.sln --configuration Release
-      
+
       # Step 7: Run tests with Coverlet to collect OpenCover format code coverage
       - name: Run tests and collect OpenCover coverage
         run: |
           dotnet test osu.sln --logger "trx;LogFileName=test_results.trx" -- /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/OpenCover/
-      
-      # Step 8: List contents of the directory to debug missing files
-      - name: List contents of the test directory
-        run: dir ./Source/Back-end/BusinessLayerTest/bin/Debug/net8.0
-      # Step 7: Install coverlet tool (for code coverage)
-      - name: Install coverlet
-        run: dotnet tool install --global coverlet.console
 
-      # Step 8: Run tests with Coverlet to collect OpenCover format code coverage
-      - name: Run tests and collect OpenCover coverage
+      # Step 8: List runsettings files (debugging step)
+      - name: List runsettings files
         run: |
-          dotnet test osu.sln --no-build --logger "trx;LogFileName=test_results.trx" -- /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/OpenCover/
+          echo "Looking for runsettings files..."
+          dir **/*.runsettings
 
       # Step 9: Install ReportGenerator (only once)
       - name: Install ReportGenerator
