@@ -66,10 +66,10 @@ jobs:
           dotnet test osu.sln --configuration Debug --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
 
       # Step 8: Debug - List TestResults directory
-      - name: Debug TestResults directory
+      - name: Debug TestResults directory (Post-Test)
         run: |
-          echo "Listing files in TestResults directory"
-          dir ./TestResults
+          echo "Searching for coverage files..."
+          Get-ChildItem -Path ./TestResults -Recurse
 
       # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
