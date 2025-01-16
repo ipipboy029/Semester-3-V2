@@ -67,10 +67,32 @@ jobs:
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
   
+      - name: Run tests and collect coverage
+        run: |
+          dotnet test osu.sln --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+      
+      - name: List TestResults directory
+        run: dir ./TestResults
+      
+      - name: Debug coverage file
+        run: dir ./TestResults/**/*.coverage
+      
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      
+      - name: Add .NET tools to PATH
+        run: echo "::add-path::$(dotnet tool path)"
+      
       - name: Generate OpenCover format
         run: |
           mkdir -p ./TestResults/OpenCover
-          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/OpenCover" -reporttypes:"OpenCover"
+          reportgenerator "-reports:./TestResults/**/*.coverage" "-targetdir:./TestResults/OpenCover" -reporttypes:"OpenCover"
+      
+      - name: List OpenCover directory
+        run: dir ./TestResults/OpenCover
+      
+      - name: Display contents of OpenCover report
+        run: cat ./TestResults/OpenCover/coverage.opencover.xml
         continue-on-error: true
 
       # Step 9: Debug OpenCover Directory
