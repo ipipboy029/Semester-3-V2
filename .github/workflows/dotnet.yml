@@ -55,28 +55,35 @@ jobs:
       - name: Build solution
         run: dotnet build osu.sln --no-restore --configuration Release
 
-      # Step 7: Run tests with coverage
+      # Step 7: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet test osu.sln --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+          dotnet test osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
 
-      # Step 9: Install ReportGenerator
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      # Step 8: Debug TestResults directory
+      - name: Debug TestResults directory
+        run: |
+          echo "Listing files in TestResults directory"
+          if [ $RUNNER_OS == 'Windows' ]; then
+            dir ./TestResults
+          else
+            ls ./TestResults
+          fi
 
-      # Step 10: Generate Cobertura format
+      # Step 9: Generate Cobertura format
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
           reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
         continue-on-error: true
 
-      # Step 12: Run Sonar Scanner End
+      # Step 10: Run Sonar Scanner End
       - name: Run SonarScanner End
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
 
   deploy:
     name: Deploy with Watchtower
