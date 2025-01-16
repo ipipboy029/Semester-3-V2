@@ -61,10 +61,6 @@ jobs:
           dotnet test osu.sln --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
 
-      # Step 8: Debug - List TestResults directory
-      - name: Debug TestResults directory
-        run: dir ./TestResults
-
       # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
@@ -74,14 +70,6 @@ jobs:
         run: |
           mkdir -p ./TestResults/Cobertura
           reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
-        continue-on-error: true
-
-      # Step 11: Debug - Verify Cobertura report
-      - name: Verify Cobertura directory
-        run: dir ./TestResults/Cobertura
-
-      - name: Display contents of Cobertura report
-        run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
         continue-on-error: true
 
       # Step 12: Run Sonar Scanner End
