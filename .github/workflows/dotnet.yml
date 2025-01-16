@@ -69,17 +69,22 @@ jobs:
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-      # Step 9: Generate OpenCover format using ReportGenerator
+      # Step 9: Debug TestResults Directory to inspect coverage files
+      - name: Verify TestResults contents
+        run: |
+          echo "Listing contents of ./TestResults directory"
+          dir ./TestResults
+
+      # Step 10: Generate OpenCover format using ReportGenerator
       - name: Generate OpenCover format
         run: |
+          # Ensure that we reference the correct file format (e.g., .coverage or .xml)
           mkdir -p ./TestResults/OpenCover
           reportgenerator "-reports:./TestResults/**/*.coverage" "-targetdir:./TestResults/OpenCover" -reporttypes:"OpenCover"
+        continue-on-error: true  # Continue even if there's an issue generating the report
 
-      # Step 10: Debug OpenCover Directory and Content
-      - name: Verify coverage file location
-        run: ls ./TestResults/OpenCover
-
-      - name: Debug OpenCover file content
+      # Step 11: Debug OpenCover Directory and Content
+      - name: Verify OpenCover Directory and Content
         run: |
           echo "Contents of OpenCover directory:"
           dir ./TestResults/OpenCover
@@ -87,12 +92,12 @@ jobs:
           cat ./TestResults/OpenCover/coverage.opencover.xml
         continue-on-error: true
 
-      # Step 11: Run SonarScanner End
+      # Step 12: Run SonarScanner End
       - name: Run SonarScanner End
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-        continue-on-error: true  # In case of failures, still proceed with the pipeline
+        continue-on-error: true
 
   deploy:
     name: Deploy with Watchtower
