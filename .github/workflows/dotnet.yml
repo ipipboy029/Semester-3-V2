@@ -42,19 +42,18 @@ jobs:
       - name: Install dependencies
         run: dotnet restore osu.sln
 
-      # Step 5: Run Sonar Scanner Begin
       - name: Run SonarScanner Begin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet-sonarscanner begin 
-            /k:"TestProjectKeySchool" '
-            /o:"ipipboy029" '
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" '
-            /d:sonar.host.url="https://sonarcloud.io" '
-            /d:sonar.cs.opencover.reportsPaths="./TestResults/OpenCover/coverage.opencover.xml"
+          dotnet-sonarscanner begin `
+          /k:"TestProjectKeySchool" `
+          /o:"ipipboy029" `
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" `
+          /d:sonar.host.url="https://sonarcloud.io" `
+          /d:sonar.cs.opencover.reportsPaths="./TestResults/OpenCover/coverage.opencover.xml"
 
       # Step 6: Build the solution
       - name: Build solution
