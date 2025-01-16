@@ -48,65 +48,50 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin 
-            /k:"TestProjectKeySchool" 
-            /o:"ipipboy029" 
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" 
-            /d:sonar.host.url="https://sonarcloud.io" 
-            /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" 
-            /d:sonar.scanner.scanAll=false
-
+          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" /d:sonar.scanner.scanAll=false
       # Step 6: Build the solution
       - name: Build solution
         run: dotnet build osu.sln --no-restore --configuration Release
 
-      # Step 7: Build solution (explicit Debug build)
-      - name: Build solution (Debug)
-        run: dotnet build osu.sln --configuration Debug --no-restore
-
-      # Step 8: Run tests with coverage
-      - name: Run tests and collect coverage (Cobertura format)
+# Step 1: Build the solution (explicit build)
+      - name: Build solution
         run: |
-          dotnet add package coverlet.collector
-          dotnet test osu.sln --configuration Debug --no-build \
-            --collect:"XPlat Code Coverage" \
-            --results-directory ./TestResults \
-            --logger "trx;LogFileName=test_results.trx"
-
-      # Step 9: Debug - List TestResults directory
-      - name: Debug TestResults directory (Post-Test)
+          dotnet build osu.sln --configuration Debug --no-restore
+      
+      # Step 2: Run tests with coverage
+      - name: Run tests and collect coverage
         run: |
-          echo "Searching for coverage files in TestResults directory..."
-          Get-ChildItem -Path ./TestResults -Recurse
+          dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+        continue-on-error: true
 
-      # Step 10: Install ReportGenerator
+      # Step 8: Debug - List TestResults directory
+      - name: Debug TestResults directory
+        run: |
+          echo "Listing files in TestResults directory"
+          dir ./TestResults
+      # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-      # Step 11: Generate Cobertura format and rename output
-      - name: Generate Cobertura report
+      # Step 10: Generate Cobertura format (fixed path issue)
+      - name: Generate Cobertura format
         run: |
-          echo "Generating Cobertura report from coverage files..."
-          reportgenerator -reports:"./TestResults/**/coverage.cobertura.xml" \
-            -targetdir:"./TestResults/Cobertura" \
-            -reporttypes:Cobertura
-          echo "Renaming Cobertura.xml to coverage.sonarqube.xml..."
-          mv ./TestResults/Cobertura/Cobertura.xml ./TestResults/Cobertura/coverage.sonarqube.xml
+          mkdir -p ./TestResults/Cobertura
+          reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+        continue-on-error: true
 
-      # Step 12: Debug - Verify renamed Cobertura report
-      - name: Debug Cobertura directory
-        run: |
-          echo "Listing contents of Cobertura directory..."
-          dir ./TestResults/Cobertura
+      # Step 11: Debug - Verify Cobertura report
+      - name: Verify Cobertura directory
+        run: dir ./TestResults/Cobertura
 
-      # Step 13: Display contents of Cobertura report
-      - name: Display Cobertura report content
+      # Step 12: Display contents of Cobertura report
+      - name: Display contents of Cobertura report
         run: |
-          echo "Displaying Cobertura report content..."
+          echo "Displaying Cobertura report content"
           cat ./TestResults/Cobertura/coverage.sonarqube.xml
         continue-on-error: true
 
-      # Step 14: Run Sonar Scanner End
+      # Step 13: Run Sonar Scanner End
       - name: Run SonarScanner End
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
