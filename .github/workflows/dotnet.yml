@@ -73,7 +73,7 @@ jobs:
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
-          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura || echo "ReportGenerator failed"
         continue-on-error: true
 
       # Step 11: Debug - Verify Cobertura report
