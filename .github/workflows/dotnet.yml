@@ -48,12 +48,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin \
-            /k:"TestProjectKeySchool" \
-            /o:"ipipboy029" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" \
+          dotnet sonarscanner begin 
+            /k:"TestProjectKeySchool" 
+            /o:"ipipboy029" 
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" 
+            /d:sonar.host.url="https://sonarcloud.io" 
+            /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" 
             /d:sonar.scanner.scanAll=false
 
       # Step 6: Build the solution
