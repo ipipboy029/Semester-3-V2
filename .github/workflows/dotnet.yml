@@ -83,6 +83,7 @@ jobs:
       # Step 11: Debug - Verify Cobertura report
       - name: Verify Cobertura directory
         run: dir ./TestResults/Cobertura
+             dir /s /b *coverage.sonarqube.xml
 
       # Step 12: Display contents of Cobertura report
       - name: Display contents of Cobertura report
