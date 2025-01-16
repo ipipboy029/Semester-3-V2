@@ -49,36 +49,41 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage.opencover.xml"
+          dotnet-sonarscanner begin \
+            /k:"TestProjectKeySchool" \
+            /o:"ipipboy029" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="./TestResults/OpenCover/coverage.opencover.xml"
 
       # Step 6: Build the solution
       - name: Build solution
         run: dotnet build osu.sln --configuration Release
 
+      # Step 7: Run tests with XPlat Code Coverage
       - name: Run tests and collect coverage
         run: |
-         dotnet test osu.sln --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+          dotnet test osu.sln --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
 
-      # Step 8: Debug TestResults directory
-      - name: Debug TestResults directory
-        run: dir ./TestResults
+      # Step 8: Generate OpenCover Format Report
+      - name: Generate OpenCover report
+        run: |
+          mkdir -p ./TestResults/OpenCover
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          reportgenerator "-reports:./TestResults/**/coverage.cobertura.xml" \
+                          "-targetdir:./TestResults/OpenCover" \
+                          -reporttypes:OpenCover
 
-      # Step 9: Debug Visual Studio Coverage XML
-      - name: Debug Coverage XML
-        run: dir ./TestResults/**/*.xml
+      # Step 9: Debug OpenCover Directory
+      - name: Debug OpenCover Directory
+        run: |
+          echo "Contents of OpenCover directory:"
+          dir ./TestResults/OpenCover
+          echo "Contents of OpenCover file:"
+          cat ./TestResults/OpenCover/coverage.opencover.xml
 
       # Step 10: Run Sonar Scanner End
       - name: Run SonarScanner End
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
-  deploy:
-    name: Deploy with Watchtower
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull and deploy using Watchtower
-        run: |
-          docker run -d --name watchtower \
-          -v /var/run/docker.sock:/var/run/docker.sock \
-          containrrr/watchtower --interval 300 --cleanup
