@@ -61,19 +61,24 @@ jobs:
           dotnet test osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
 
-      # Step 8: Debug - List TestResults directory
+      # Debug after tests
       - name: Debug TestResults directory
         run: dir ./TestResults
-
-      # Step 9: Install ReportGenerator
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
       # Step 10: Generate Cobertura format
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
-          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:"Cobertura;SonarQube"
+        continue-on-error: true
+
+      # Debug Cobertura directory
+      - name: Debug Cobertura directory
+        run: dir ./TestResults/Cobertura
+
+      # Verify contents of Cobertura report
+      - name: Display contents of Cobertura report
+        run: cat ./TestResults/Cobertura/coverage.sonarqube.xml
         continue-on-error: true
 
       # Step 11: Debug - Verify Cobertura report
