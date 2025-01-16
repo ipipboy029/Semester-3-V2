@@ -67,8 +67,10 @@ jobs:
       # Step 8: Run tests with Coverlet to collect OpenCover format code coverage
       - name: Run tests and collect OpenCover coverage
         run: |
-          dotnet test osu.sln --no-build --logger "trx;LogFileName=test_results.trx" \
-            /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/OpenCover/
+          dotnet test osu.sln --no-build --logger "trx;LogFileName=test_results.trx" -- \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput=./TestResults/OpenCover/
 
       # Step 9: Install ReportGenerator (only once)
       - name: Install ReportGenerator
