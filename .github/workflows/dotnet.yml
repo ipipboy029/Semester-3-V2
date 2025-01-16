@@ -55,10 +55,15 @@ jobs:
       - name: Build solution
         run: dotnet build osu.sln --no-restore --configuration Release
 
-      # Step 7: Run tests with coverage
+# Step 1: Build the solution (explicit build)
+      - name: Build solution
+        run: |
+          dotnet build osu.sln --configuration Debug --no-restore
+      
+      # Step 2: Run tests with coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet test osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+          dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
 
       # Step 8: Debug - List TestResults directory
