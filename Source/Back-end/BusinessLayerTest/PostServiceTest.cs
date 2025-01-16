@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using BusinessLayer.Interfaces;
 
-namespace BusinessLayer.Tests
+namespace BusinessLayer.Tests.UnitTests
 {
     [TestClass]
     public class PostServiceTests

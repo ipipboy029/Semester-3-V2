@@ -11,7 +11,7 @@ using Microsoft.AspNet.Identity;
 using System;
 using PasswordVerificationResult = Microsoft.AspNetCore.Identity.PasswordVerificationResult;
 
-namespace BusinessLayer.Tests
+namespace BusinessLayer.Tests.UnitTests
 {
     [TestClass]
     public class UserServiceTests

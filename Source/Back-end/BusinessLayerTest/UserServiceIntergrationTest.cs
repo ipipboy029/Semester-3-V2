@@ -9,7 +9,7 @@ using BusinessLayer;
 using DataAccessLayer;
 using Microsoft.AspNetCore.Identity;
 
-namespace BusinessLayerTest
+namespace BusinessLayerTest.IntegrationTests
 {
     [TestClass]
     public class UserServiceIntergrationTests

@@ -21,7 +21,6 @@ function AddPost({ onPostAdded }) {
       imageURL,
       description, // Add description to the post data
     };
-
     // Send new post to backend
     fetch('https://localhost:7237/Post', {
       method: 'POST',
@@ -30,14 +29,26 @@ function AddPost({ onPostAdded }) {
       },
       body: JSON.stringify(newPost),
     })
-      .then((res) => res.json())
-      .then((data) => {
-        onPostAdded(data);  // Update the parent component state with the new post
-        setSubject('');
-        setImageURL('');
-        setDescription('');
-        setError('');
-      })
+    .then((res) => {
+      console.log('Response status:', res.status);  // Log status
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+      if (res.status === 204) {  // No Content response
+        return null;  // or return {} depending on your backend
+      }
+      return res.text();  // Read the response as text
+    })
+    .then((text) => {
+      console.log('Response text:', text);  // Log the raw response text
+      const data = text ? JSON.parse(text) : {};  // Parse response only if it has content
+      onPostAdded(data);  // Update the parent component with the new post
+      setSubject('');
+      setImageURL('');
+      setDescription('');
+      setError('');
+    })
+    
       .catch((err) => {
         console.error('Error adding post:', err);
         setError('Failed to add post.');
@@ -56,7 +67,7 @@ function AddPost({ onPostAdded }) {
             id="subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md text-black"
             placeholder="Enter post subject"
           />
         </div>
@@ -67,7 +78,7 @@ function AddPost({ onPostAdded }) {
             id="imageURL"
             value={imageURL}
             onChange={(e) => setImageURL(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md text-black"
             placeholder="Enter image URL"
           />
         </div>
@@ -77,7 +88,7 @@ function AddPost({ onPostAdded }) {
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md text-black"
             placeholder="Enter post description"
             rows="4"
           />

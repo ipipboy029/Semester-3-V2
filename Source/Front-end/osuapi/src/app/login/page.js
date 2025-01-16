@@ -29,7 +29,9 @@ function LoginPage() {
         // If the response is successful, parse the token and store it in localStorage
         const data = await response.json();
         localStorage.setItem('jwtToken', data.token); // Store the JWT token
-        router.push('/'); // Redirect to the home page or dashboard
+        
+        // Redirect using router.push() for Next.js (client-side navigation)
+        window.location.replace('/'); // Redirect to the home page or dashboard
       } else {
         // If response is not OK, handle errors from the API
         const errorData = await response.json();

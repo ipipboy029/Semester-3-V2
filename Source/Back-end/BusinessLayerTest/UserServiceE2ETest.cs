@@ -8,6 +8,8 @@ using DataAccessLayer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
+namespace BusinessLayerTest;
+
 [TestClass]
 public class UserServiceE2ETests
 {

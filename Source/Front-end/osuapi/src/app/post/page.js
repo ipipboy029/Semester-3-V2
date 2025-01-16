@@ -7,15 +7,17 @@ function PostPage() {
   const [isLoading, setLoading] = useState(true);
   const [showAddPost, setShowAddPost] = useState(false);  // State to toggle the AddPost form
 
-  useEffect(() => {
-    fetch("https://localhost:7237/Post")
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      });
-  }, []);
-
+  const fetchPosts = () => {
+    useEffect(() => {
+      fetch("https://localhost:7237/Post")
+        .then((res) => res.json())
+        .then((data) => {
+          setData(data);
+          setLoading(false);
+        });
+    }, []);
+  }
+  
   const handlePostAdded = (newPost) => {
     // Add the new post to the existing list of posts
     setData((prevData) => [newPost, ...prevData]);
