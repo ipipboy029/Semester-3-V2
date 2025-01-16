@@ -67,7 +67,7 @@ jobs:
       - name: Generate OpenCover format
         run: |
           mkdir -p ./TestResults/OpenCover
-          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/OpenCover" -reporttypes:"Cobertura;SonarQube"
+          reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/OpenCover" -reporttypes:"OpenCover"
         continue-on-error: true
 
       # Step 9: Debug OpenCover Directory
