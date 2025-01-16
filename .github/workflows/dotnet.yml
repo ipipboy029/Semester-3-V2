@@ -65,11 +65,11 @@ jobs:
       - name: Debug TestResults directory
         run: |
           echo "Listing files in TestResults directory"
-          if [ $RUNNER_OS == 'Windows' ]; then
+          if ($env:RUNNER_OS -eq 'Windows') {
             dir ./TestResults
-          else
+          } else {
             ls ./TestResults
-          fi
+          }
 
       # Step 9: Generate Cobertura format
       - name: Generate Cobertura format
