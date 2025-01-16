@@ -50,10 +50,10 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
           dotnet-sonarscanner begin 
-            /k:"TestProjectKeySchool" 
-            /o:"ipipboy029" 
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
-            /d:sonar.host.url="https://sonarcloud.io" 
+            /k:"TestProjectKeySchool" '
+            /o:"ipipboy029" '
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" '
+            /d:sonar.host.url="https://sonarcloud.io" '
             /d:sonar.cs.opencover.reportsPaths="./TestResults/OpenCover/coverage.opencover.xml"
 
       # Step 6: Build the solution
