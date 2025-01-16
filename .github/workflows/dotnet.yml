@@ -55,10 +55,9 @@ jobs:
       - name: Build solution
         run: dotnet build osu.sln --configuration Release
 
-      # Step 7: Run tests with coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet test osu.sln --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+         dotnet test osu.sln --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
 
       # Step 8: Debug TestResults directory
       - name: Debug TestResults directory
