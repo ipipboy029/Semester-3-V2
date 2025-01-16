@@ -63,7 +63,10 @@ jobs:
       - name: Run tests and collect coverage
         run: |
           dotnet test osu.sln --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
-
+          
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+  
       - name: Generate OpenCover format
         run: |
           mkdir -p ./TestResults/OpenCover
