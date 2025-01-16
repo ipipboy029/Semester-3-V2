@@ -81,6 +81,14 @@ jobs:
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
       
       - name: Add .NET tools to PATH
+        run: echo "C:\Users\runneradmin\.dotnet\tools" >> $GITHUB_PATH
+      
+      - name: Generate OpenCover format
+        run: |
+          mkdir -p ./TestResults/OpenCover
+          reportgenerator "-reports:./TestResults/**/*.coverage" "-targetdir:./TestResults/OpenCover" -reporttypes:"OpenCover"
+
+      - name: Add .NET tools to PATH
         run: echo "::add-path::$(dotnet tool path)"
       
       - name: Generate OpenCover format
