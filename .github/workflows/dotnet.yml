@@ -55,38 +55,41 @@ jobs:
       - name: Build solution
         run: dotnet build osu.sln --configuration Release
 
-      # Step 7: Run tests and collect coverage
+      # Step 7: Verify the built files exist (for debugging purposes)
+      - name: Debug - List built files
+        run: |
+          echo "Listing files in the output directory"
+          dir ./Source/Back-end/bin/Release/net8.0/
+
+      # Step 8: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
           dotnet test osu.sln --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
 
-      # Step 8: Debug TestResults directory
-      - name: Debug TestResults directory
+      # Step 9: Debug - List files in TestResults directory
+      - name: Debug - List TestResults directory
         run: |
           echo "Listing files in TestResults directory"
-          if ($env:RUNNER_OS -eq 'Windows') {
-            dir ./TestResults
-          } else {
-            ls ./TestResults
-          }
+          dir ./TestResults
 
-      # Step 9: Install ReportGenerator
+      # Step 10: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-      # Step 10: Generate Cobertura format
+      # Step 11: Generate Cobertura format
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
           reportgenerator "-reports:./TestResults/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
         continue-on-error: true
 
-      # Step 11: Run Sonar Scanner End
+      # Step 12: Run Sonar Scanner End
       - name: Run SonarScanner End
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
 
 
   deploy:
