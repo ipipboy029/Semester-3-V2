@@ -93,7 +93,7 @@ jobs:
       - name: Display contents of Cobertura report
         run: |
           echo "Displaying Cobertura report content"
-          cat ./TestResults/Cobertura/coverage.sonarqube.xml
+          dir ./TestResults/Cobertura/coverage.sonarqube.xml
         continue-on-error: true
 
       # Step 13: Run Sonar Scanner End
