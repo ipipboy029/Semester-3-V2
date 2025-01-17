@@ -24,6 +24,14 @@ namespace BusinessLayer
         }
         public async Task<bool> AddPost(Post post)
         {
+            if (post == null)
+            {
+                throw new ArgumentNullException(nameof(post), "Post cannot be null");
+            }
+            if (_context == null)
+            {
+                throw new InvalidOperationException("The database context is not initialized.");
+            }
             SocketService.AddMessage(post.Subject);
             await _context.Posts.AddAsync(post);
             return (await _context.SaveChangesAsync()) > 0;
