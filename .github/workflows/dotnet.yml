@@ -87,7 +87,7 @@ jobs:
           echo "Checking Cobertura directory..."
           dir ./TestResults/Cobertura
           echo "Listing coverage file..."
-          dir ./TestResults/Cobertura/coverage.sonarqube.xml
+          dir ./TestResults/Cobertura/coverage.xml
 
       # Step 13: Run SonarScanner End
       - name: Run SonarScanner End
