@@ -71,32 +71,26 @@ jobs:
           echo "Listing files in TestResults directory"
           dir ./TestResults
       
-      # Step 9: Install ReportGenerator tool
-      - name: Install ReportGenerator tool
-        run: |
-          echo "Installing reportgenerator tool..."
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          echo "Reportgenerator tool installed."
+      # Step 9: Install ReportGenerator
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
       
-      # Step 10: Generate Cobertura format with debugging
-      - name: Generate Cobertura format with debugging
+      # Step 10: Generate Cobertura format (with a fixed path)
+      - name: Generate Cobertura format
         run: |
-          echo "Creating Cobertura directory..."
           mkdir -p ./TestResults/Cobertura
-          echo "Cobertura directory created."
-          # Generate the report
           reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
-          echo "Cobertura report generation completed."
         continue-on-error: true
       
-      # Step 11: List files in the Cobertura directory
-      - name: Verify Cobertura directory contents
+      # Step 11: Debug - Verify Cobertura directory
+      - name: Verify Cobertura directory and display contents
         run: |
           echo "Listing files in Cobertura directory"
           dir ./TestResults/Cobertura
-          # If files exist, list the names of the files in the directory
-          Get-ChildItem -Path './TestResults/Cobertura' -Recurse
-      
+          echo "Displaying Cobertura report content"
+          dir ./TestResults/Cobertura/coverage.sonarqube.xml
+        continue-on-error: true
+        
       # Step 12: Display contents of Cobertura report
       - name: Display contents of Cobertura report
         run: |
