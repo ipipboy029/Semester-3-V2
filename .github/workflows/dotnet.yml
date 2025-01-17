@@ -42,6 +42,11 @@ jobs:
       - name: Install dependencies
         run: dotnet restore osu.sln
 
+      - name: Rename Cobertura file to coverage.sonarqube.xml
+        run: |
+          echo "Renaming Cobertura.xml to coverage.sonarqube.xml"
+          Rename-Item ./TestResults/Cobertura/Cobertura.xml ./TestResults/Cobertura/coverage.sonarqube.xml
+
       # Step 5: Run Sonar Scanner Begin
       - name: Run SonarScanner Begin
         env:
