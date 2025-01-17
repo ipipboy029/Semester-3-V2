@@ -14,62 +14,80 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: ./Source/Back-end  # Adjusted to match your directory structure
+        working-directory: ./Source/Back-end
 
     steps:
-    
-    # Step 1: Set up JDK 17 (required for SonarCloud)
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: 17
-        distribution: 'zulu'
+      # Step 1: Set up JDK 17 (required for SonarCloud)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
 
-    # Step 2: Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      # Step 2: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    # Step 3: Cache dependencies
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: ${{ runner.os }}-nuget-
+      # Step 3: Cache dependencies
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
 
-    - name: Install dependencies
-      run: dotnet restore osu.sln
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: dotnet restore osu.sln
 
-    - name: Build the project
-      run: dotnet build --configuration Release
+      # Step 5: Run Sonar Scanner Begin
+      - name: Run SonarScanner Begin
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" /d:sonar.scanner.scanAll=false
       
-    - name: Install Coverlet (for code coverage)
-      run: dotnet tool install --global coverlet.console
+      # Step 6: Build the solution
+      - name: Build solution
+        run: dotnet build osu.sln --no-restore --configuration Release
+
+      # Step 7: Build the solution (explicit build)
+      - name: Build solution
+        run: |
+          dotnet build osu.sln --configuration Debug --no-restore
+          
+      # Step 8: Run tests and collect coverage
+      - name: Run tests and collect coverage
+        run: |
+          dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+        continue-on-error: true
       
-    - name: Run Tests with Coverage and Generate Cobertura Report
-      run: |
-        dotnet test osu.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
-        coverlet ./Source/Back-end/bin/Release/net8.0/BusinessLayerTest.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
-
-    - name: Prepare SonarCloud analysis
-      run: |
-        dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.opencover.reportPaths="TestResults/**/coverage.cobertura.xml"
-
-    - name: Run the build again (required for SonarCloud)
-      run: dotnet build --configuration Release
-
-    - name: End SonarCloud analysis
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      # Step 8: List files in the TestResults directory
+      - name: List files in TestResults directory
+        run: |
+          echo "Listing files in TestResults directory"
+          dir ./TestResults
       
-    # Step 12: Upload Coverage Report as an Artifact
-    - name: Upload Coverage Report
-      uses: actions/upload-artifact@v3
-      with:
-        name: CodeCoverageReport
-        path: ./CoverageReports
-        retention-days: 7
+      # Step 9: Install ReportGenerator
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      
+      # Step 10: Generate Cobertura format (with a fixed path)
+      - name: Generate Cobertura format
+        run: |
+          mkdir -p ./TestResults/Cobertura
+          reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+        continue-on-error: true
+        
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: CodeCoverageReport
+          path: ./CoverageReports
+          retention-days: 7
 
   deploy:
     name: Deploy with Watchtower
