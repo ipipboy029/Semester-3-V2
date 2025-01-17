@@ -2,17 +2,44 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import FooTer from "./Footer";
+import NotificationBox from "./NotificationBox";
 
 export default function NavBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [message, setMessage] = useState("");
   const router = useRouter();
+  const [visible, setVisible] = useState(false);
+  const [text, setText] = useState("");
+  const showNotification = (message, ms) => {
+    setVisible(true);
+    setText(message);
+    setTimeout(() => {
+      setVisible(false);
+    }, ms);
+  };
 
   useEffect(() => {
+    socketInitializer();
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("jwtToken"); // Check if JWT token exists in localStorage
       setIsLoggedIn(!!token); // If token exists, set isLoggedIn to true
     }
   }, []);
+
+  const socketInitializer = async () => {
+    const ws = new WebSocket("wss://localhost:7237/ws");
+      ws.onopen = () => {
+        console.log("websocket connected")
+      };
+      ws.onmessage = (message) => {
+        console.log(message)
+        showNotification("New post: " + message.data, 1500)
+      };
+      ws.onerror =(error) => {
+        console.log(error)
+      };
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken"); // Remove the JWT token on logout
@@ -58,7 +85,7 @@ export default function NavBar() {
                 <a href="/post">Posts</a>
               </li>
             )}
-
+        <NotificationBox visible={visible} text={text}/>
             {isLoggedIn ? (
               <li>
                 <button

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Net;
+using System.Net.WebSockets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +54,44 @@ builder.Services.AddAuthentication(options =>
     };
 });
 var app = builder.Build();
+var webSocketOptions = new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromMinutes(1)
+};
+app.UseWebSockets(webSocketOptions);
+app.Map("/ws", async context =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        using var ws = await context.WebSockets.AcceptWebSocketAsync();
+        while (true)
+        {
+            var message = SocketService.GetMessage();
+            if(message == null)
+            {
+                continue;
+                Thread.Sleep(1000);
+            }
+            var bytes = Encoding.UTF8.GetBytes(message);
+            var arraySegment = new ArraySegment<byte>(bytes, 0, bytes.Length);
 
+            if (ws.State == WebSocketState.Open)
+            {
+                await ws.SendAsync(arraySegment, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+            else if(ws.State == WebSocketState.Closed || ws.State == WebSocketState.Aborted)
+            {
+                break;
+            }
+            Thread.Sleep(1000);
+        }
+    }
+    else
+    {
+        Console.WriteLine("Bad WebSocket request: " + context.Request.Path);
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+    }
+});
 app.UseCors("AllowLocalhost3000");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -24,6 +24,7 @@ namespace BusinessLayer
         }
         public async Task<bool> AddPost(Post post)
         {
+            SocketService.AddMessage(post.Subject);
             await _context.Posts.AddAsync(post);
             return (await _context.SaveChangesAsync()) > 0;
         }
