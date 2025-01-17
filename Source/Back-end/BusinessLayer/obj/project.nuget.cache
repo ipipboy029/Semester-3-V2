@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "MCdexUrH/9aLPdyMVkGBwNq6GdHH59ma5yok6T+aZrwnu5aQNIhjWwprsAliatMbHj5iYkjrMSpc+7mWxPOamQ==",
+  "dgSpecHash": "qk4NH07zMyHV4YTwA7nWAoBJlPsPXfZ01Ebcm3Mm8lMv+/ZPI2TJzrT8Jz8CmmslPfAOCxpjOMLYAPSvct00eQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\ivani\\Documents\\Fontys\\Semester-3-V2\\Source\\Back-end\\BusinessLayer\\BusinessLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ivani\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\ivani\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\ivani\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
+    "C:\\Users\\ivani\\.nuget\\packages\\coverlet.collector\\6.0.3\\coverlet.collector.6.0.3.nupkg.sha512",
     "C:\\Users\\ivani\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\ivani\\.nuget\\packages\\microsoft.aspnet.identity.core\\2.2.4\\microsoft.aspnet.identity.core.2.2.4.nupkg.sha512",
     "C:\\Users\\ivani\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.10\\microsoft.aspnetcore.cryptography.internal.8.0.10.nupkg.sha512",
