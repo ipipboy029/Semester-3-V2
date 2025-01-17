@@ -99,7 +99,7 @@ jobs:
           # First, list the contents of the Cobertura directory
           dir ./TestResults/Cobertura
           # Then, search for the coverage.sonarqube.xml file recursively
-          Get-ChildItem -Path 'D:\a\Semester-3-V2\Semester-3-V2' -Recurse -Filter '*coverage.sonarqube.xml'
+          Get-ChildItem -Path 'D:\a\Semester-3-V2\' -Recurse -Filter '*coverage.sonarqube.xml'
           
       # Step 12: Display contents of Cobertura report
       - name: Display contents of Cobertura report
