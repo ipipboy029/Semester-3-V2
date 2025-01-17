@@ -78,9 +78,7 @@ jobs:
          ls -R coverage-report
   
       - name: Run SonarScanner End
-        run: |
-          dotnet-sonarscanner end \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   deploy:
     name: Deploy with Watchtower
