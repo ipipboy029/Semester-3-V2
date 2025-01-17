@@ -41,13 +41,15 @@ jobs:
       # Step 4: Install dependencies
       - name: Install dependencies
         run: dotnet restore osu.sln
-
+        
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
+        
       # Step 5: Run Sonar Scanner Begin
       - name: Run SonarScanner Begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet tool install --global dotnet-sonarscanner
           dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="coverage-report/SonarQube.xml /d:sonar.scanner.scanAll=false" /d:sonar.verbose=true
       
       # Step 6: Build the solution
