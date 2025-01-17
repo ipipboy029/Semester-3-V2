@@ -12,10 +12,7 @@ jobs:
   build-and-test:
     name: Build, Test, and Sonar Analysis
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: ./Source/Back-end
-
+    
     steps:
       # Step 1: Set up JDK 17 (required for SonarCloud)
       - name: Set up JDK 17
@@ -65,11 +62,18 @@ jobs:
           dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
       
-      # Step 9: List files in the TestResults directory
+      # Step 8: List files in the TestResults directory
       - name: List files in TestResults directory
         run: |
           echo "Listing files in TestResults directory"
           dir ./TestResults
+      
+      # Step 9: Install ReportGenerator tool
+      - name: Install ReportGenerator tool
+        run: |
+          echo "Installing reportgenerator tool..."
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          echo "Reportgenerator tool installed."
       
       # Step 10: Generate Cobertura format with debugging
       - name: Generate Cobertura format with debugging
