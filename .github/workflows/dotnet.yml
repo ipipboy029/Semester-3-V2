@@ -12,7 +12,10 @@ jobs:
   build-and-test:
     name: Build, Test, and Sonar Analysis
     runs-on: windows-latest
-    
+    defaults:
+      run:
+        working-directory: ./Source/Back-end
+
     steps:
       # Step 1: Set up JDK 17 (required for SonarCloud)
       - name: Set up JDK 17
