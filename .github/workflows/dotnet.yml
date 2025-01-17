@@ -77,9 +77,19 @@ jobs:
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
-          reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+          reportgenerator "-reports:D:/a/semester-3-v2/Source/Back-end/TestResults/test_results.trx" "-targetdir:D:/a/semester-3-v2/Source/Back-end/TestResults/Cobertura" -reporttypes:Cobertura
         continue-on-error: true
+        
+      - name: Debug Cobertura Report Generation Path
+        run: |
+          echo "Checking if report was generated correctly"
+          dir ./TestResults/Cobertura
 
+      - name: Check ReportGenerator Output
+        run: |
+          echo "Checking if the file was created"
+          ls -l ./TestResults/Cobertura
+    
       # Step 11: Debug - Verify Cobertura report
       - name: Verify Cobertura directory
         run: |
