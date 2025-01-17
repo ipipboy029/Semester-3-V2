@@ -67,7 +67,6 @@ jobs:
       # Step 8: Debug - List TestResults directory
       - name: Debug TestResults directory
         run: |
-          echo "Listing files in TestResults directory"
           dir ./TestResults
       # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
@@ -76,8 +75,12 @@ jobs:
       # Step 10: Generate Cobertura format (fixed path issue)
       - name: Generate Cobertura format
         run: |
-          mkdir -p ./TestResults/Cobertura
-          reportgenerator "-reports:D:/a/semester-3-v2/Source/Back-end/TestResults/test_results.trx" "-targetdir:D:/a/semester-3-v2/Source/Back-end/TestResults/Cobertura" -reporttypes:Cobertura
+          mkdir ./TestResults/Cobertura
+          if (Test-Path "./TestResults/test_results.trx") {
+            reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+          } else {
+            echo "Test results file not found, skipping Cobertura report generation."
+          }
         continue-on-error: true
         
       - name: Debug Cobertura Report Generation Path
