@@ -59,18 +59,12 @@ jobs:
       run: |
         if (Test-Path "Source/Back-end/bin/Release/net8.0") { Write-Host "Build output found." } else { Write-Host "Build output NOT found." }
 
-    # Step 8: Run Tests with Coverage and Generate Cobertura Report
     - name: Run Tests with Coverage
       run: |
-        dotnet test osu.sln \
-          --no-build \
-          --configuration Release \
-          --collect:"XPlat Code Coverage" \
-          --results-directory ./TestResults
-        ~/.dotnet/tools/reportgenerator \
-          -reports:"TestResults/**/coverage.cobertura.xml" \
-          -targetdir:"./CoverageReports" \
-          -reporttypes:HtmlInline_AzurePipelines Html
+        dotnet test osu.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
+        ~/.dotnet/tools/reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"./CoverageReports" -reporttypes:HtmlInline_AzurePipelines Html
+
+
 
     # Step 9: SonarQube Analysis Begin
     - name: SonarQube Analysis Begin
