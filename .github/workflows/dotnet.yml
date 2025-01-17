@@ -90,7 +90,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: CodeCoverageReport
-          path: ./CoverageReports
+          path: ${{ github.workspace }}/Source/Back-end/CoverageReports
           retention-days: 7
 
   deploy:
