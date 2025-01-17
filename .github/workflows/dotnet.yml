@@ -42,53 +42,37 @@ jobs:
       - name: Install dependencies
         run: dotnet restore osu.sln
 
-      # Step 5: Run SonarScanner Begin
-      - name: Run SonarScanner Begin
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Run tests with coverage
         run: |
-          dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage.opencover.xml"
-
-      # Step 6: Build the solution (explicit build step before tests)
-      - name: Build solution
-        run: dotnet build osu.sln --configuration Debug --no-restore
-
-      # Step 7: Run tests and collect coverage
-      - name: Run tests and collect coverage
+          dotnet test --configuration Release --collect:"XPlat Code Coverage"
+  
+      - name: Install SonarCloud Scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+  
+      - name: Prepare SonarCloud analysis
         run: |
-          dotnet test osu.sln --configuration Debug --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx" /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/
-
-      # Step 8: Debug - List TestResults directory
-      - name: Debug - List TestResults directory
+          dotnet-sonarscanner begin \
+            /k:"TestProjectKeySchool" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.coverageReportPaths="**/coverage.cobertura.xml"
+  
+      - name: Run the build again (required for SonarCloud)
+        run: dotnet build --configuration Release
+  
+      - name: Run tests (to generate coverage report)
+        run: dotnet test --configuration Release
+  
+      - name: End SonarCloud analysis
+        run: dotnet-sonarscanner end \
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+  
+      - name: Upload coverage report to SonarCloud
         run: |
-          echo "Checking TestResults directory..."
-          dir ./TestResults
-
-      # Step 9: Install ReportGenerator
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-      # Step 10: Generate SonarQube compatible coverage report
-      - name: Generate SonarQube compatible coverage report
-        run: reportgenerator -reports:./TestResults/**/coverage.opencover.xml -targetdir:./TestResults/Cobertura -reporttypes:SonarQube
-
-      # Step 11: Debug - Verify Cobertura report
-      - name: Debug - Verify Cobertura report
-        run: |
-          echo "Checking TestResults directory..."
-          dir ./TestResults
-          echo "Checking Cobertura directory..."
-          dir ./TestResults/Cobertura
-          echo "Listing coverage file..."
-          dir ./TestResults/Cobertura/coverage.opencover.xml
-
-      # Step 13: Run SonarScanner End
-      - name: Run SonarScanner End
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          curl -u "${{ secrets.SONAR_TOKEN }}": \
+          -X POST \
+          -F "file=@./TestResults/*/coverage.cobertura.xml" \
+          "https://sonarcloud.io/api/coverage/upload"
 
   deploy:
     name: Deploy with Watchtower
