@@ -46,29 +46,34 @@ jobs:
     - name: Build the project
       run: dotnet build --configuration Release
 
-    # Step 5: Install coverlet to generate coverage report in Cobertura format
+    # Step 5: Verify the build output directory exists
+    - name: Verify build output directory
+      run: |
+        if (Test-Path "Source/Back-end/bin/Release/net6.0") { Write-Host "Build output found." } else { Write-Host "Build output NOT found." }
+
+    # Step 6: Install coverlet to generate coverage report in Cobertura format
     - name: Install coverlet
       run: dotnet tool install --global coverlet.console
 
-    # Step 6: Run tests with coverage and generate Cobertura report
+    # Step 7: Run tests with coverage and generate Cobertura report
     - name: Run tests with coverage and generate Cobertura report
       run: |
         dotnet test --configuration Release --collect:"XPlat Code Coverage"
-        coverlet ./bin/Release/net6.0/osu.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
+        coverlet ./Source/Back-end/bin/Release/net6.0/YourProject.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
 
-    # Step 7: Install SonarCloud Scanner
+    # Step 8: Install SonarCloud Scanner
     - name: Install SonarCloud Scanner
       run: dotnet tool install --global dotnet-sonarscanner
 
-    # Step 8: Prepare SonarCloud analysis
+    # Step 9: Prepare SonarCloud analysis
     - name: Prepare SonarCloud analysis
       run: dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="TestResults/coverage.cobertura.xml"
 
-    # Step 9: Run the build again (required for SonarCloud)
+    # Step 10: Run the build again (required for SonarCloud)
     - name: Run the build again (required for SonarCloud)
       run: dotnet build --configuration Release
 
-    # Step 10: End SonarCloud analysis
+    # Step 11: End SonarCloud analysis
     - name: End SonarCloud analysis
       run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
