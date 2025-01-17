@@ -79,15 +79,13 @@ jobs:
           dir ./TestResults/Cobertura
           
       # Step 13: Run SonarScanner Begin
+      # Step 13: Run SonarScanner Begin
       - name: Run SonarScanner Begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml"
+          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="./TestResults/**/coverage.cobertura.xml"
 
       # Step 14: Build solution
       - name: Build solution
