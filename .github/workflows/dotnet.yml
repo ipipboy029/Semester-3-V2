@@ -80,11 +80,10 @@ jobs:
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
-          reportgenerator "-reports:./TestResults/test_results.trx" "
-                          "-targetdir:./TestResults/Cobertura" "
-                          -reporttypes:Cobertura "
-                          -reportfile:Cobertura.xml
-      
+          reportgenerator "-reports:./TestResults/test_results.trx" `
+                          "-targetdir:./TestResults/Cobertura" `
+                          -reporttypes:Cobertura
+                          
       # Debug - Verify generated Cobertura report
       - name: Debug - Verify Cobertura report
         run: |
