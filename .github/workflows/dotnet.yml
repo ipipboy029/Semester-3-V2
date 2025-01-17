@@ -42,41 +42,56 @@ jobs:
       - name: Install dependencies
         run: dotnet restore osu.sln
 
-      # Step 5: Run SonarScanner Begin
+      # Step 5: Run Sonar Scanner Begin
       - name: Run SonarScanner Begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet tool install --global dotnet-sonarscanner && dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" /d:sonar.scanner.scanAll=false
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" /d:sonar.scanner.scanAll=false
       
       # Step 6: Build the solution
       - name: Build solution
         run: dotnet build osu.sln --no-restore --configuration Release
 
-      # Step 7: Run tests and collect coverage
+      # Step 7: Build the solution (explicit build)
+      - name: Build solution
+        run: |
+          dotnet build osu.sln --configuration Debug --no-restore
+          
+      # Step 8: Run tests and collect coverage
       - name: Run tests and collect coverage
-        run: dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+        run: |
+          dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
       
-      # Step 8: Verify Test Results
+      # Step 8: List files in the TestResults directory
       - name: List files in TestResults directory
-        run: dir ./TestResults
+        run: |
+          echo "Listing files in TestResults directory"
+          dir ./TestResults
       
       # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
       
-      # Step 10: Generate Cobertura format
+      # Step 10: Generate Cobertura format (with a fixed path)
       - name: Generate Cobertura format
-        run: mkdir -p ./TestResults/Cobertura && reportgenerator "-reports:./TestResults/**/*.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:"Cobertura"
+        run: |
+          mkdir -p ./TestResults/Cobertura
+          reportgenerator "-reports:./TestResults/**/*.trx" "-targetdir:./CoverageReports" -reporttypes:Cobertura
 
       # Step 11: Verify Cobertura output
       - name: Verify Cobertura output
-        run: dir ./TestResults/Cobertura
+        run: |
+          echo "Checking CoverageReports directory"
+          dir ./CoverageReports
         
-      # Step 12: Finalize SonarCloud analysis
-      - name: Finalize SonarCloud Analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: CodeCoverageReport
+          path: ${{ github.workspace }}/Source/Back-end/CoverageReports
+          retention-days: 7
 
   deploy:
     name: Deploy with Watchtower
@@ -87,4 +102,3 @@ jobs:
           docker run -d --name watchtower \
           -v /var/run/docker.sock:/var/run/docker.sock \
           containrrr/watchtower --interval 300 --cleanup
-
