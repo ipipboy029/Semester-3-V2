@@ -78,7 +78,7 @@ jobs:
          ls -R coverage-report
   
       - name: Run SonarScanner End
-        run: dotnet-sonarscanner end /d:sonar.coverageReportPaths="D:\a\Semester-3-V2\Semester-3-V2\Source\Back-end\coverage-report\SonarQube.xml" /d:sonar.scanner.scanAll=false /d:sonar.login="***"
+        run: dotnet-sonarscanner end /d:sonar.login="***"
 
   deploy:
     name: Deploy with Watchtower
