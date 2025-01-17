@@ -59,7 +59,7 @@ jobs:
     - name: Run tests with coverage and generate Cobertura report
       run: |
         dotnet test --configuration Release --collect:"XPlat Code Coverage"
-        coverlet ./Source/Back-end/bin/Release/net6.0/YourProject.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
+        coverlet ./Source/Back-end/bin/Release/net8.0/YourProject.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
 
     # Step 8: Install SonarCloud Scanner
     - name: Install SonarCloud Scanner
