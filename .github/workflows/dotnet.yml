@@ -48,7 +48,7 @@ jobs:
     - name: Run Tests with Coverage and Generate Cobertura Report
       run: |
         dotnet test osu.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
-        coverlet ./Source/Back-end/bin/Release/net8.0/BusinessLayer.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
+        coverlet ./Source/Back-end/bin/Release/net8.0/BusinessLayerTest.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
 
     - name: Verify Coverage Report Exists
       run: |
