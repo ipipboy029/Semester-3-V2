@@ -39,46 +39,36 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
         restore-keys: ${{ runner.os }}-nuget-
 
-    # Step 4: Install dependencies
     - name: Install dependencies
-      run: dotnet restore osu.sln  # Adjusted for your solution file
-      
-    # Step 5: Build the project
+      run: dotnet restore osu.sln
+
     - name: Build the project
       run: dotnet build --configuration Release
 
-    # Step 6: Install tools (Coverlet, SonarScanner, ReportGenerator)
-    - name: Install Coverlet, SonarScanner, and ReportGenerator
-      run: |
-        dotnet tool install --global coverlet.console
-        dotnet tool install --global dotnet-sonarscanner
-        dotnet tool install --global dotnet-reportgenerator-globaltool
-
-    # Step 7: Verify the build output directory exists
-    - name: Verify build output directory
-      run: |
-        if (Test-Path "Source/Back-end/bin/Release/net8.0") { Write-Host "Build output found." } else { Write-Host "Build output NOT found." }
-
-    - name: Run Tests with Coverage
+    - name: Run Tests with Coverage and Generate Cobertura Report
       run: |
         dotnet test osu.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
-        ~/.dotnet/tools/reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"./CoverageReports" -reporttypes:HtmlInline_AzurePipelines Html
+        coverlet ./Source/Back-end/bin/Release/net8.0/BusinessLayer.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
+
+    - name: Verify Coverage Report Exists
+      run: |
+        if (Test-Path "./TestResults/coverage.cobertura.xml") { 
+          Write-Host "Coverage file found."
+        } else {
+          Write-Host "Coverage file NOT found."
+          exit 1
+        }
 
     - name: Prepare SonarCloud analysis
       run: |
         dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="TestResults/coverage.cobertura.xml"
-        dotnet build --configuration Release
 
-
-    # Step 10: Build the solution (required for SonarCloud)
     - name: Run the build again (required for SonarCloud)
       run: dotnet build --configuration Release
 
-    # Step 11: SonarQube Analysis End
-    - name: SonarQube Analysis End
-      run: |
-        dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
+    - name: End SonarCloud analysis
+      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      
     # Step 12: Upload Coverage Report as an Artifact
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v3
