@@ -60,31 +60,35 @@ jobs:
       
       # Step 2: Run tests with coverage
       # Step 5: Run tests and collect coverage
+# Step 5: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
           dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
       
-      # Step 10: List files in the TestResults directory
+      # Step 10: Generate Cobertura format with debugging
+      - name: Generate Cobertura format with debugging
+        run: |
+          echo "Creating Cobertura directory..."
+          mkdir -p ./TestResults/Cobertura
+          echo "Cobertura directory created."
+          reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+          echo "Cobertura report generation completed."
+        continue-on-error: true
+      
+      # Step 11: List files in the TestResults directory
       - name: List files in the TestResults directory
         run: |
           echo "Listing files in TestResults directory"
           dir ./TestResults
       
-      # Step 11: List files in the Cobertura directory
-      - name: List files in the Cobertura directory
+      # Step 12: Verify Cobertura directory
+      - name: Verify Cobertura directory
         run: |
           echo "Listing files in Cobertura directory"
           dir ./TestResults/Cobertura
-      
-      # Step 12: Generate Cobertura format with debugging
-      - name: Generate Cobertura format with debugging
-        run: |
-          echo "Generating Cobertura report..."
-          mkdir ./TestResults/Cobertura
-          reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
-          echo "Cobertura report generation completed."
-        continue-on-error: true
+          # Confirm if the file exists after generation
+          Get-ChildItem -Path './TestResults/Cobertura' -Recurse -Filter '*.xml'
       
       # Step 13: Display contents of Cobertura report
       - name: Display contents of Cobertura report
@@ -92,12 +96,11 @@ jobs:
           echo "Displaying Cobertura report content"
           dir ./TestResults/Cobertura/coverage.sonarqube.xml
         continue-on-error: true
-
-      # Step 13: Run Sonar Scanner End
-      - name: Run SonarScanner End
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+            # Step 13: Run Sonar Scanner End
+            - name: Run SonarScanner End
+              env:
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+              run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   deploy:
     name: Deploy with Watchtower
