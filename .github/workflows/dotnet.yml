@@ -53,14 +53,14 @@ jobs:
       - name: Build solution
         run: dotnet build osu.sln --no-restore --configuration Release
 
-# Step 1: Build the solution (explicit build)
+      # Step 1: Build the solution (explicit build)
       - name: Build solution
         run: |
           dotnet build osu.sln --configuration Debug --no-restore
       
       # Step 2: Run tests with coverage
       # Step 5: Run tests and collect coverage
-# Step 5: Run tests and collect coverage
+      # Step 5: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
           dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
@@ -96,11 +96,11 @@ jobs:
           echo "Displaying Cobertura report content"
           dir ./TestResults/Cobertura/coverage.sonarqube.xml
         continue-on-error: true
-            # Step 13: Run Sonar Scanner End
-            - name: Run SonarScanner End
-              env:
-                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-              run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      # Step 14: Run Sonar Scanner End
+      - name: Run SonarScanner End
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   deploy:
     name: Deploy with Watchtower
