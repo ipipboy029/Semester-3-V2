@@ -63,7 +63,6 @@ jobs:
       - name: Run tests and collect coverage
         run: |
           dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
-        continue-on-error: true
       
       # Step 8: List files in the TestResults directory
       - name: List files in TestResults directory
@@ -79,8 +78,13 @@ jobs:
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
-          reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
-        continue-on-error: true
+          reportgenerator "-reports:./TestResults/**/*.trx" "-targetdir:./CoverageReports" -reporttypes:Cobertura
+
+      # Step 11: Verify Cobertura output
+      - name: Verify Cobertura output
+        run: |
+          echo "Checking CoverageReports directory"
+          dir ./CoverageReports
         
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v3
