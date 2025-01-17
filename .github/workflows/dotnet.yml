@@ -9,8 +9,12 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # Or you can use windows-latest for Windows-based builds
+  build-and-test:
+    name: Build, Test, and Sonar Analysis
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./Source/Back-end # Or you can use windows-latest for Windows-based builds
 
     steps:
     - name: Checkout code
