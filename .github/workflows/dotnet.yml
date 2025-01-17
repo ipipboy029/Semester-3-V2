@@ -43,28 +43,22 @@ jobs:
       run: dotnet restore osu.sln
 
     - name: Build the project
-      run: dotnet build --configuration Release
-
+      run: dotnet build osu.sln --configuration Release
+      
+    - name: Install Coverlet (for code coverage)
+      run: dotnet tool install --global coverlet.console
+      
     - name: Run Tests with Coverage and Generate Cobertura Report
       run: |
         dotnet test osu.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
         coverlet ./Source/Back-end/bin/Release/net8.0/BusinessLayerTest.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
 
-    - name: Verify Coverage Report Exists
-      run: |
-        if (Test-Path "./TestResults/coverage.cobertura.xml") { 
-          Write-Host "Coverage file found."
-        } else {
-          Write-Host "Coverage file NOT found."
-          exit 1
-        }
-
     - name: Prepare SonarCloud analysis
       run: |
-        dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="TestResults/coverage.cobertura.xml"
+        dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.opencover.reportPaths="TestResults/**/coverage.cobertura.xml"
 
     - name: Run the build again (required for SonarCloud)
-      run: dotnet build --configuration Release
+      run: dotnet build osu.sln --configuration Release
 
     - name: End SonarCloud analysis
       run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
