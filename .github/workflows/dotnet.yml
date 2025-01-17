@@ -76,7 +76,7 @@ jobs:
 
       # Step 11: Generate SonarQube compatible report
       - name: Generate SonarQube compatible coverage report
-        run: reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./TestResults/Cobertura -reporttypes:SonarQube
+        run: reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./TestResults/Cobertura -reporttypes:SonarQube -outputFile:coverage.cobertura.xml
 
       # Step 12: Debug - Verify Cobertura report
       - name: Debug - Verify Cobertura report
