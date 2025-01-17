@@ -62,7 +62,7 @@ jobs:
       # Step 8: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet test /BusinessLayerTest/BusinessLayerTest.csproj --no-build --collect:"XPlat Code Coverage" --logger: "trx"
+          dotnet test .\BusinessLayerTest\BusinessLayerTest.csproj --no-build --collect:"XPlat Code Coverage" --logger: "trx"
   
       - name: Create coverage report directory
         run: |
