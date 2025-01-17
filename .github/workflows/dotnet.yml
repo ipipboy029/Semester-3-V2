@@ -56,9 +56,10 @@ jobs:
 
       # Step 7: Run tests and collect coverage
       - name: Run tests and collect coverage
-        run: dotnet test osu.sln --configuration Debug --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx" /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/
+        run: |
+          dotnet test osu.sln --configuration Debug --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx" /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/
 
-      # Step 8: Debug - Check generated coverage report
+      # Step 8: Debug - List TestResults directory
       - name: Debug - List TestResults directory
         run: |
           echo "Checking TestResults directory..."
@@ -68,17 +69,11 @@ jobs:
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-      # Step 10: Ensure .NET tools are in PATH
-      - name: Add .NET tools to PATH
-        shell: powershell
-        run: |
-          $Env:PATH += ";$Env:USERPROFILE\.dotnet\tools"
-
-      # Step 11: Generate SonarQube compatible coverage report
+      # Step 10: Generate SonarQube compatible coverage report
       - name: Generate SonarQube compatible coverage report
         run: reportgenerator -reports:./TestResults/**/coverage.opencover.xml -targetdir:./TestResults/Cobertura -reporttypes:SonarQube
 
-      # Step 12: Debug - Verify Cobertura report
+      # Step 11: Debug - Verify Cobertura report
       - name: Debug - Verify Cobertura report
         run: |
           echo "Checking TestResults directory..."
