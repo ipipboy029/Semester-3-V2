@@ -68,12 +68,8 @@ jobs:
 
       # Step 10: Generate Cobertura format coverage report
       - name: Generate Cobertura format
-        run: |
-          mkdir -p ./TestResults/Cobertura
-          reportgenerator -reports:./TestResults/**/coverage.cobertura.xml \
-                          -targetdir:./TestResults/Cobertura \
-                          -reporttypes:Cobertura
-
+        run: reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./TestResults/Cobertura -reporttypes:Cobertura
+        
       # Step 11: Debug - Verify Cobertura report
       - name: Debug - Verify Cobertura report
         run: |
