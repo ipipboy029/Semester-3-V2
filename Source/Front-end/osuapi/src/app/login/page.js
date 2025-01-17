@@ -63,7 +63,6 @@ function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}  // Update the email value as the user types
                 autoComplete="email"
-                required
                 className="px-2 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-black focus:outline-none sm:text-sm text-black"
               />
             </div>
@@ -79,7 +78,6 @@ function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}  // Update the password value as the user types
                 autoComplete="password"
-                required
                 className="px-2 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-black focus:outline-none sm:text-sm text-black"
               />
             </div>
