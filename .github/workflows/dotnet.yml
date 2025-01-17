@@ -94,3 +94,13 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+  deploy:
+      name: Deploy with Watchtower
+      runs-on: ubuntu-latest
+      steps:
+        - name: Pull and deploy using Watchtower
+          run: |
+            docker run -d --name watchtower \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            containrrr/watchtower --interval 300 --cleanup
