@@ -41,14 +41,14 @@ jobs:
       # Step 4: Install dependencies
       - name: Install dependencies
         run: dotnet restore osu.sln
-        
+
       # Step 5: Run SonarScanner Begin
       - name: Run SonarScanner Begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="./TestResults/**/coverage.cobertura.xml"
+          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="./TestResults/**/coverage.opencover.xml"
 
       # Step 6: Build the solution (explicit build step before tests)
       - name: Build solution
@@ -74,9 +74,9 @@ jobs:
         run: |
           $Env:PATH += ";$Env:USERPROFILE\.dotnet\tools"
 
-      # Step 11: Generate SonarQube compatible report
+      # Step 11: Generate SonarQube compatible coverage report
       - name: Generate SonarQube compatible coverage report
-        run: reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./TestResults/Cobertura -reporttypes:Cobertura -outputFile:coverage.cobertura.xml
+        run: reportgenerator -reports:./TestResults/**/coverage.opencover.xml -targetdir:./TestResults/Cobertura -reporttypes:SonarQube -outputFile:coverage.opencover.xml
 
       # Step 12: Debug - Verify Cobertura report
       - name: Debug - Verify Cobertura report
@@ -86,7 +86,7 @@ jobs:
           echo "Checking Cobertura directory..."
           dir ./TestResults/Cobertura
           echo "Listing coverage file..."
-          dir ./TestResults/Cobertura/coverage.cobertura.xml
+          dir ./TestResults/Cobertura/coverage.opencover.xml
 
       # Step 13: Run SonarScanner End
       - name: Run SonarScanner End
