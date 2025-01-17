@@ -49,36 +49,35 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
           dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="./TestResults/Cobertura/Cobertura.xml"
-
-
+      
       # Step 6: Build the solution (explicit build step before tests)
       - name: Build solution
         run: dotnet build osu.sln --configuration Debug --no-restore
-
+      
       # Step 7: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: dotnet test osu.sln --configuration Debug --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
-
+      
       # Step 8: Debug - Check generated coverage report
       - name: Debug - List TestResults directory
         run: |
           echo "Checking TestResults directory..."
           dir ./TestResults
-
+      
       # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
+      
       # Step 10: Ensure .NET tools are in PATH
       - name: Add .NET tools to PATH
         shell: powershell
         run: |
           $Env:PATH += ";$Env:USERPROFILE\.dotnet\tools"
-
-      # Step 11: Generate Cobertura format coverage report
-      - name: Generate Cobertura format
-        run: reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./TestResults/Cobertura -reporttypes:Cobertura
-        
+      
+      # Step 11: Generate SonarQube compatible report
+      - name: Generate SonarQube compatible coverage report
+        run: reportgenerator -reports:./TestResults/**/coverage.cobertura.xml -targetdir:./TestResults/Cobertura -reporttypes:SonarQube
+      
       # Step 12: Debug - Verify Cobertura report
       - name: Debug - Verify Cobertura report
         run: |
@@ -87,11 +86,21 @@ jobs:
           echo "Checking Cobertura directory..."
           dir ./TestResults/Cobertura
           echo "Listing coverage file..."
-          dir ./TestResults/Cobertura/Cobertura.xml
-
+          dir ./TestResults/Cobertura/coverage.sonarqube.xml
+      
       # Step 13: Run SonarScanner End
       - name: Run SonarScanner End
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          
+  deploy:
+      name: Deploy with Watchtower
+      runs-on: ubuntu-latest
+      steps:
+        - name: Pull and deploy using Watchtower
+          run: |
+            docker run -d --name watchtower \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            containrrr/watchtower --interval 300 --cleanup
