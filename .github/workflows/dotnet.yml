@@ -42,11 +42,6 @@ jobs:
       - name: Install dependencies
         run: dotnet restore osu.sln
 
-      - name: Rename Cobertura file to coverage.sonarqube.xml
-        run: |
-          echo "Renaming Cobertura.xml to coverage.sonarqube.xml"
-          Rename-Item ./TestResults/Cobertura/Cobertura.xml ./TestResults/Cobertura/coverage.sonarqube.xml
-
       # Step 5: Run Sonar Scanner Begin
       - name: Run SonarScanner Begin
         env:
@@ -67,8 +62,13 @@ jobs:
       # Step 8: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+          dotnet test osu.sln --configuration Debug --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
+
+      - name: Rename Cobertura file to coverage.sonarqube.xml
+        run: |
+          echo "Renaming Cobertura.xml to coverage.sonarqube.xml"
+          Rename-Item ./TestResults/Cobertura/Cobertura.xml ./TestResults/Cobertura/coverage.sonarqube.xml
       
       # Step 8: List files in the TestResults directory
       - name: List files in TestResults directory
