@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: ./Source/Back-end # Or you can use windows-latest for Windows-based builds
+        working-directory: ./Source/Back-end
 
     steps:
 
@@ -46,25 +46,32 @@ jobs:
     - name: Build the project
       run: dotnet build --configuration Release
 
-    - name: Run tests with coverage
+    # Step 5: Install coverlet to generate coverage report in Cobertura format
+    - name: Install coverlet
+      run: dotnet tool install --global coverlet.console
+
+    # Step 6: Run tests with coverage and generate Cobertura report
+    - name: Run tests with coverage and generate Cobertura report
       run: |
         dotnet test --configuration Release --collect:"XPlat Code Coverage"
+        coverlet ./bin/Release/net6.0/osu.dll --target "dotnet" --targetargs "test" --format cobertura --output ./TestResults/coverage.cobertura.xml
 
+    # Step 7: Install SonarCloud Scanner
     - name: Install SonarCloud Scanner
       run: dotnet tool install --global dotnet-sonarscanner
 
+    # Step 8: Prepare SonarCloud analysis
     - name: Prepare SonarCloud analysis
-      run: dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="**/coverage.cobertura.xml"
+      run: dotnet-sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="TestResults/coverage.cobertura.xml"
 
+    # Step 9: Run the build again (required for SonarCloud)
     - name: Run the build again (required for SonarCloud)
       run: dotnet build --configuration Release
 
-    - name: Run tests (to generate coverage report)
-      run: dotnet test --configuration Release
-
+    # Step 10: End SonarCloud analysis
     - name: End SonarCloud analysis
       run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-      
+
   deploy:
     name: Deploy with Watchtower
     runs-on: ubuntu-latest
