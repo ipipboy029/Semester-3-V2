@@ -59,49 +59,34 @@ jobs:
           dotnet build osu.sln --configuration Debug --no-restore
       
       # Step 2: Run tests with coverage
+      # Step 5: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
           dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
-
-      # Step 8: Debug - List TestResults directory
-      - name: Debug TestResults directory
+      
+      # Step 10: List files in the TestResults directory
+      - name: List files in the TestResults directory
         run: |
+          echo "Listing files in TestResults directory"
           dir ./TestResults
-      # Step 9: Install ReportGenerator
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-      # Step 10: Generate Cobertura format (fixed path issue)
-      - name: Generate Cobertura format
+      
+      # Step 11: List files in the Cobertura directory
+      - name: List files in the Cobertura directory
         run: |
+          echo "Listing files in Cobertura directory"
+          dir ./TestResults/Cobertura
+      
+      # Step 12: Generate Cobertura format with debugging
+      - name: Generate Cobertura format with debugging
+        run: |
+          echo "Generating Cobertura report..."
           mkdir ./TestResults/Cobertura
-          if (Test-Path "./TestResults/test_results.trx") {
-            reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
-          } else {
-            echo "Test results file not found, skipping Cobertura report generation."
-          }
+          reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
+          echo "Cobertura report generation completed."
         continue-on-error: true
-        
-      - name: Debug Cobertura Report Generation Path
-        run: |
-          echo "Checking if report was generated correctly"
-          dir ./TestResults/Cobertura
-
-      - name: Check ReportGenerator Output
-        run: |
-          echo "Checking if the file was created"
-          ls -l ./TestResults/Cobertura
-    
-      # Step 11: Debug - Verify Cobertura report
-      - name: Verify Cobertura directory
-        run: |
-          # First, list the contents of the Cobertura directory
-          dir ./TestResults/Cobertura
-          # Then, search for the coverage.sonarqube.xml file recursively
-          Get-ChildItem -Path 'D:\a\Semester-3-V2\' -Recurse -Filter '*coverage.sonarqube.xml'
-          
-      # Step 12: Display contents of Cobertura report
+      
+      # Step 13: Display contents of Cobertura report
       - name: Display contents of Cobertura report
         run: |
           echo "Displaying Cobertura report content"
