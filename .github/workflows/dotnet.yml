@@ -64,17 +64,11 @@ jobs:
         dotnet test osu.sln --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
         ~/.dotnet/tools/reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"./CoverageReports" -reporttypes:HtmlInline_AzurePipelines Html
 
-
-
-    # Step 9: SonarQube Analysis Begin
-    - name: SonarQube Analysis Begin
+    - name: Prepare SonarCloud analysis
       run: |
-        dotnet sonarscanner begin /k:"TestProjectKeySchool" \
-          /o:"ipipboy029" \
-          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-          /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.cobertura.xml" \
-          /d:sonar.exclusions="**/bin/**,**/obj/**,**/TestResults/**,**/*.g.cs,**/*.Designer.cs" \
-          /d:sonar.coverage.exclusions="**/TestResults/**"
+        dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.coverageReportPaths="TestResults/coverage.cobertura.xml"
+        dotnet build --configuration Release
+
 
     # Step 10: Build the solution (required for SonarCloud)
     - name: Run the build again (required for SonarCloud)
