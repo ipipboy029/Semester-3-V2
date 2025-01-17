@@ -48,7 +48,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" /d:sonar.scanner.scanAll=false
+          dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.cobertura.xml" /d:sonar.scanner.scanAll=false
       
       # Step 6: Build the solution
       - name: Build solution
@@ -62,7 +62,10 @@ jobs:
       # Step 8: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
-          dotnet test osu.sln --configuration Debug --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
+          dotnet test osu.sln --configuration Debug --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults 
+          ~/.dotnet/tools/reportgenerator \
+          -reports:"TestResults/**/coverage.cobertura.xml" \
+          -targetdir:"./CoverageReports" \ --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
         
       # Step 8: List files in the TestResults directory
