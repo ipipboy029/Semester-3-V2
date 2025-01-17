@@ -49,58 +49,54 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
           dotnet sonarscanner begin /k:"TestProjectKeySchool" /o:"ipipboy029" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="./TestResults/Cobertura/coverage.sonarqube.xml" /d:sonar.scanner.scanAll=false
+      
       # Step 6: Build the solution
       - name: Build solution
         run: dotnet build osu.sln --no-restore --configuration Release
 
-# Step 1: Build the solution (explicit build)
+      # Step 7: Build the solution (explicit build)
       - name: Build solution
         run: |
           dotnet build osu.sln --configuration Debug --no-restore
-      
-      # Step 2: Run tests with coverage
+          
+      # Step 8: Run tests and collect coverage
       - name: Run tests and collect coverage
         run: |
           dotnet test osu.sln --configuration Debug --no-build --collect:"Code Coverage" --results-directory ./TestResults --logger "trx;LogFileName=test_results.trx"
         continue-on-error: true
-
-      # Step 8: Debug - List TestResults directory
-      - name: Debug TestResults directory
+      
+      # Step 8: List files in the TestResults directory
+      - name: List files in TestResults directory
         run: |
           echo "Listing files in TestResults directory"
           dir ./TestResults
+      
       # Step 9: Install ReportGenerator
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-      # Step 10: Generate Cobertura format (fixed path issue)
+      
+      # Step 10: Generate Cobertura format (with a fixed path)
       - name: Generate Cobertura format
         run: |
           mkdir -p ./TestResults/Cobertura
           reportgenerator "-reports:./TestResults/test_results.trx" "-targetdir:./TestResults/Cobertura" -reporttypes:Cobertura
         continue-on-error: true
-
-      # Step 11: Debug - Verify Cobertura report
-      - name: Verify Cobertura directory
-        run: |
-          # First, list the contents of the Cobertura directory
-          dir ./TestResults/Cobertura
       
-          # Then, search for the coverage.sonarqube.xml file recursively
-          Get-ChildItem -Path 'D:\a\Semester-3-V2\Semester-3-V2' -Recurse -Filter '*coverage.sonarqube.xml'
-          
+      # Step 11: Debug - Verify Cobertura directory
+      - name: Verify Cobertura directory and display contents
+        run: |
+          echo "Listing files in Cobertura directory"
+          dir ./TestResults/Cobertura
+          echo "Displaying Cobertura report content"
+          dir ./TestResults/Cobertura/coverage.sonarqube.xml
+        continue-on-error: true
+        
       # Step 12: Display contents of Cobertura report
       - name: Display contents of Cobertura report
         run: |
           echo "Displaying Cobertura report content"
-          cat ./TestResults/Cobertura/coverage.sonarqube.xml
+          dir ./TestResults/Cobertura/coverage.sonarqube.xml
         continue-on-error: true
-
-      # Step 13: Run Sonar Scanner End
-      - name: Run SonarScanner End
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   deploy:
     name: Deploy with Watchtower
