@@ -63,12 +63,10 @@ jobs:
       - name: Run tests and collect coverage
         run: |
           dotnet test /BusinessLayerTest/BusinessLayerTest.csproj --no-build --collect:"XPlat Code Coverage" --logger: "trx"
-      
-      - name: Run Tests and Collect Coverage
-        run: dotnet test "/BusinessLayerTest/BusinessLayerTest.csproj" --no-build --collect:"XPlat Code Coverage" --logger:"trx"
   
       - name: Create coverage report directory
-        run: mkdir -p coverage-report
+        run: |
+          mkdir -p coverage-report
   
       - name: Generate coverage report with reportgenerator
         run: |
